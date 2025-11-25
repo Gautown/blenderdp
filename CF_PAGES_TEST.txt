@@ -1,0 +1,2 @@
+Cloudflare Pages Test File
+This file is created to verify that the repository structure is correct and can be cloned successfully.
