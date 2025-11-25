@@ -1,0 +1,140 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const portfolios = await getCollection('portfolio');
+  return portfolios.map(portfolio => ({
+    params: { slug: portfolio.slug },
+    props: { slug: portfolio.slug },
+  }));
+}
+
+const { slug } = Astro.props;
+const portfolio = await getEntry('portfolio', slug) as CollectionEntry<'portfolio'>;
+const { Content } = await render(portfolio);
+
+// 获取所有笔记并按日期排序，获取最新的3篇
+const allNotes = await getCollection('notes');
+const sortedNotes = allNotes.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
+const latestNotes = sortedNotes.slice(0, 3);
+
+// 获取随机推荐内容（示例数据）
+const randomRecommendations = [
+  { title: "推荐作品1", url: "/portfolio", type: "作品" },
+  { title: "推荐工具1", url: "/tools", type: "工具" },
+  { title: "推荐笔记1", url: "/notes", type: "笔记" },
+];
+
+// 获取最新文章（笔记合集）
+const latestArticles = latestNotes.map(note => ({
+  title: note.data.title,
+  url: `/notes/${note.slug}`,
+  date: note.data.date ? new Date(note.data.date).toLocaleDateString('zh-CN') : '未知日期'
+}));
+
+// 获取热门标签（从实际内容中提取）
+// 收集所有内容的标签
+const allPortfolios = await getCollection('portfolio');
+const allTools = await getCollection('tools');
+const allNotesCollection = await getCollection('notes');
+const allWarehouses = await getCollection('warehouse');
+
+// 提取所有标签并统计频率
+const tagCounts = new Map();
+
+// 处理作品集标签
+allPortfolios.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理工具标签
+allTools.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理笔记标签
+allNotesCollection.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理仓库标签
+allWarehouses.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 转换为数组并按频率排序，取前10个
+const popularTags = Array.from(tagCounts.entries())
+  .map(([name, count]) => ({ name, count, url: `/tags/${encodeURIComponent(name)}` }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
+---
+
+<ContentLayout 
+  title={portfolio.data.title}
+  description={portfolio.data.description}
+  breadcrumbLinks={[
+    { href: '/', label: '首页' },
+    { href: '/portfolio', label: '作品集' },
+    { href: '#', label: '正文' }
+  ]}
+  randomRecommendations={randomRecommendations}
+  latestArticles={latestArticles}
+  popularTags={popularTags}
+>
+  <article class="portfolio-detail">
+    <h1>{portfolio.data.title}</h1>
+    
+    <div class="portfolio-meta">
+      <p>{portfolio.data.date ? new Date(portfolio.data.date).toLocaleDateString('zh-CN') : ''}</p>
+    </div>
+    
+    {/* 显示标签 */}
+    {portfolio.data.tags && portfolio.data.tags.length > 0 && (
+      <div class="portfolio-tags">
+        <h3>标签：</h3>
+        <div class="tag-list">
+          {portfolio.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    {portfolio.data.thumbnail && (
+      <img 
+        src={portfolio.data.thumbnail} 
+        alt={portfolio.data.title} 
+        class="portfolio-image"
+        onerror="this.onerror=null;this.src='/images/noimg.gif';"
+      />
+    )}
+    
+    <div class="portfolio-content">
+      <Content />
+    </div>
+  </article>
+</ContentLayout>
+
+<!-- 所有样式已移至global.css -->

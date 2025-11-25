@@ -1,0 +1,72 @@
+{
+  "copyright": "© 2025 GauTown Studio. 保留所有权利。",
+  "keywords": "免费学习充电、畅快交流互动、优质模型、材质、插件随心下载的专业站点",
+  "logo": "/images/logo.svg",
+  "siteName": "GauTown Studio",
+  "heroBackgroundImage": "/images/haikei.svg",
+  "navigation": [
+    {
+      "name": "首页",
+      "url": "/"
+    },
+    {
+      "name": "作品",
+      "url": "/portfolio"
+    },
+    {
+      "name": "工具",
+      "url": "/tools",
+      "children": [
+        {
+          "name": "软件",
+          "url": "/tools/software"
+        },
+        {
+          "name": "插件",
+          "url": "/tools/plugins"
+        }
+      ]
+    },
+    {
+      "name": "仓库",
+      "url": "/warehouse",
+      "children": [
+        {
+          "name": "模型",
+          "url": "/warehouse/models"
+        },
+        {
+          "name": "贴图",
+          "url": "/warehouse/textures"
+        },
+        {
+          "name": "HDRIs",
+          "url": "/warehouse/hdris"
+        }
+      ]
+    },
+    {
+      "name": "笔记",
+      "url": "/notes"
+    },
+    {
+      "name": "关于",
+      "url": "/about"
+    }
+  ],
+  "subtitle": "免费学习、交流，模型、插件下载站",
+  "title": "樘高设计干货分享",
+  "friendLinks": [
+    {
+      "name": "Github",
+      "url": "https://github.com/Gautown",
+      "description": "Gautown Studio的开源项目"
+    },
+    {
+      "name": "虚位待坐",
+      "url": "#",
+      "description": "请联系我"
+    }
+  ],
+  "description": "免费学习充电、畅快交流互动、优质模型、材质、插件随心下载的专业站点"
+}

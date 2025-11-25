@@ -32,5 +32,17 @@
     "dev": "astro dev",
     "preview": "astro build && wrangler dev"
   },
-  "type": "module"
+  "type": "module",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gautown/blenderdp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gautown/blenderdp/issues"
+  },
+  "homepage": "https://github.com/Gautown/blenderdp#readme"
 }

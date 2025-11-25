@@ -1,50 +1,153 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import MainLayout from '../layouts/MainLayout.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const notes = await getCollection('notes');
+const portfolios = await getCollection('portfolio');
+const tools = await getCollection('tools');
+const warehouses = await getCollection('warehouse');
+const abouts = await getCollection('about');
+const siteConfig = await getEntry('site-config', 'site');
+
+// 格式化日期的辅助函数
+function formatDate(date: Date | string | undefined) {
+  if (!date) return '未知日期';
+  return new Date(date).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// 获取标签的辅助函数（根据集合类型）
+function getTags(collectionType: string) {
+  const tags: Record<string, string> = {
+    'warehouse': '仓库',
+    'portfolio': '作品',
+    'tools': '工具',
+    'notes': '笔记',
+    'about': '关于'
+  };
+  return tags[collectionType] || '内容';
+}
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<MainLayout title={siteConfig?.data.title} description={siteConfig?.data.description}>
+  <div id="top"></div>
+  <div slot="hero" class="hero" style="background-image: url('/images/haikei.svg')">
+    <h1>{siteConfig?.data.title}</h1>
+    <p>{siteConfig?.data.subtitle}</p>
+  </div>
+  <div class="section">
+    <h2 class="section-title">仓库</h2>
+    <div class="content-grid grid-5">
+      {warehouses.map(warehouse => (
+        <a href={`/warehouse/${warehouse.slug}`} class="content-card" aria-label={`查看仓库：${warehouse.data.title}`}>
+          <div class="card-image">
+            {warehouse.data.thumbnail ? (
+              <img src={warehouse.data.thumbnail} alt={warehouse.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('warehouse')}</span>
+            <h3 class="card-title">{warehouse.data.title}</h3>
+            <p class="card-date">{formatDate(warehouse.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/warehouse" class="view-all">查看所有仓库</a>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">作品集</h2>
+    <div class="content-grid grid-5">
+      {portfolios.map(portfolio => (
+        <a href={`/portfolio/${portfolio.slug}`} class="content-card" aria-label={`查看作品集：${portfolio.data.title}`}>
+          <div class="card-image">
+            {portfolio.data.thumbnail ? (
+              <img src={portfolio.data.thumbnail} alt={portfolio.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('portfolio')}</span>
+            <h3 class="card-title">{portfolio.data.title}</h3>
+            <p class="card-date">{formatDate(portfolio.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/portfolio" class="view-all">查看所有作品集</a>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">工具集</h2>
+    <div class="content-grid grid-5">
+      {tools.map(tool => (
+        <a href={`/tools/${tool.slug}`} class="content-card" aria-label={`查看工具：${tool.data.title}`}>
+          <div class="card-image">
+            {tool.data.thumbnail ? (
+              <img src={tool.data.thumbnail} alt={tool.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('tools')}</span>
+            <h3 class="card-title">{tool.data.title}</h3>
+            <p class="card-date">{formatDate(tool.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/tools" class="view-all">查看所有工具</a>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">笔记</h2>
+    <div class="content-grid grid-5">
+      {notes.map(note => (
+        <a href={`/notes/${note.slug}`} class="content-card" aria-label={`查看笔记：${note.data.title}`}>
+          <div class="card-image">
+            <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('notes')}</span>
+            <h3 class="card-title">{note.data.title}</h3>
+            <p class="card-date">未知日期</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/notes" class="view-all">查看所有笔记</a>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">关于</h2>
+    {abouts.length > 0 && (
+      <div class="about-content">
+        <div class="about-wrapper">
+          <div class="about-image">
+            {abouts[0].data.thumbnail ? (
+              <img src={abouts[0].data.thumbnail} alt={abouts[0].data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="about-text">
+            <h3>{abouts[0].data.title}</h3>
+            <div class="about-description">
+              {abouts[0].data.description}
+            </div>
+            <a href={`/about/${abouts[0].slug}`} class="about-link">了解更多 →</a>
+          </div>
+        </div>
+      </div>
+    )}
+
+  </div>
+</MainLayout>

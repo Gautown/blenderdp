@@ -1,0 +1,80 @@
+---
+interface Props {
+  /**
+   * 随机推荐内容
+   */
+  randomRecommendations?: {
+    title: string;
+    url: string;
+    type: string;
+  }[];
+  
+  /**
+   * 最新文章（笔记合集）
+   */
+  latestArticles?: {
+    title: string;
+    url: string;
+    date: string;
+  }[];
+  
+  /**
+   * 热门标签
+   */
+  popularTags?: {
+    name: string;
+    count: number;
+    url: string;
+  }[];
+}
+
+const { 
+  randomRecommendations = [],
+  latestArticles = [],
+  popularTags = []
+} = Astro.props;
+---
+
+<aside class="sidebar">
+  <!-- 随机推荐 -->
+  <section class="sidebar-section">
+    <h3 class="sidebar-title">随机推荐</h3>
+    <ul class="sidebar-list">
+      {randomRecommendations.map((item) => (
+        <li class="sidebar-item">
+          <a href={item.url} class="sidebar-link" aria-label={`查看${item.type}：${item.title}`}>
+            <span class="sidebar-item-type">{item.type}</span>
+            <span class="sidebar-item-title">{item.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+  
+  <!-- 最新文章 -->
+  <section class="sidebar-section">
+    <h3 class="sidebar-title">最新文章</h3>
+    <ul class="sidebar-list">
+      {latestArticles.map((article) => (
+        <li class="sidebar-item">
+          <a href={article.url} class="sidebar-link">
+            <span class="sidebar-item-title">{article.title}</span>
+            <span class="sidebar-item-date">{article.date}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+  
+  <!-- 热门标签 -->
+  <section class="sidebar-section">
+    <h3 class="sidebar-title">热门标签</h3>
+    <div class="sidebar-tags">
+      {popularTags.map((tag) => (
+        <a href={tag.url} class="sidebar-tag" aria-label={`查看标签：${tag.name}`}>
+          {tag.name} <span class="sidebar-tag-count">{tag.count}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</aside>

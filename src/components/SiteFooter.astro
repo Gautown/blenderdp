@@ -1,0 +1,30 @@
+---
+import { getEntry } from 'astro:content';
+
+const siteConfig = await getEntry('site-config', 'site');
+const friendLinks = siteConfig?.data.friendLinks || [];
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-section">
+      <h3>友情链接</h3>
+      <ul class="friend-links">
+        {friendLinks.map((link: { name: string; url: string; description: string }) => (
+          <li>
+            <a href={link.url} target="_blank" rel="noopener noreferrer" title={link.description}>
+              {link.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    
+    <div class="footer-section">
+      <p class="copyright">
+        {siteConfig?.data.copyright || '© 2025 网站名称. 保留所有权利。'}
+      </p>
+    </div>
+  </div>
+</footer>
+

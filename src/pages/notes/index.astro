@@ -1,0 +1,46 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const notes = await getCollection('notes');
+---
+
+<MainLayout title="笔记">
+  <Breadcrumb 
+    links={[
+      { href: '/', label: '首页' },
+      { href: '#', label: '笔记' }
+    ]} 
+  />
+  
+  <h2 class="Collection-tile">笔记</h2>
+  
+  <div class="content-grid grid-5">
+    {notes.map(note => (
+      <a href={`/notes/${note.slug}`} class="content-card" aria-label={`查看笔记：${note.data.title}`}>
+        <div class="card-image">
+          <img 
+            src={note.data.thumbnail || "/images/noimg.gif"} 
+            alt={note.data.title} 
+            onerror="this.src='/images/noimg.gif'" 
+            class="placeholder-image" 
+          />
+        </div>
+        <div class="card-content">
+          <span class="card-tag">笔记</span>
+          <h3 class="card-title">{note.data.title}</h3>
+          <p class="card-date">未知日期</p>
+        </div>
+      </a>
+    ))}
+  </div>
+  
+  {notes.length === 0 && (
+    <p style="text-align: center; margin-top: 2rem;">暂无笔记</p>
+  )}
+</MainLayout>
+
+<style>
+  /* notes页面特定样式可以保留 */
+</style>

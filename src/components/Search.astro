@@ -1,0 +1,23 @@
+---
+interface Props {
+  placeholder?: string;
+}
+
+const { placeholder = "搜索..." } = Astro.props;
+---
+
+<div class="search-container">
+  <form class="search-form" action="/search" method="get">
+    <input 
+      type="text" 
+      name="q" 
+      class="search-input" 
+      placeholder={placeholder}
+      aria-label="搜索网站内容"
+    />
+    <button type="submit" class="search-button" aria-label="搜索">
+      <i class="bi bi-search"></i>
+    </button>
+  </form>
+</div>
+

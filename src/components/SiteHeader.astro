@@ -1,0 +1,71 @@
+---
+import { getEntry } from 'astro:content';
+import Search from './Search.astro';
+
+// 使用正确的集合名称 'site-config'
+const siteConfig = await getEntry('site-config', 'site');
+const navigation = siteConfig?.data.navigation || [];
+
+// 添加调试信息
+console.log('SiteConfig data:', siteConfig?.data);
+console.log('Navigation data:', navigation);
+---
+
+<header class="site-header">
+  <div class="header-container">
+    <div class="logo-area">
+      <a href="/" class="logo-link">
+        {siteConfig?.data.logo && siteConfig.data.logo !== "" ? (
+          <>
+            <img src={siteConfig.data.logo} alt={siteConfig.data.siteName} class="logo" />
+            <h1 class="site-title site-title-hidden">{siteConfig?.data.siteName || '网站名称'}</h1>
+          </>
+        ) : (
+          <>
+            <div class="logo-placeholder">{siteConfig?.data.siteName?.charAt(0) || 'G'}</div>
+            <h1 class="site-title">{siteConfig?.data.siteName || '网站名称'}</h1>
+          </>
+        )}
+      </a>
+    </div>
+    
+    {/* 移动端菜单切换按钮 */}
+    <input type="checkbox" id="menu-toggle" class="menu-toggle" />
+    <label for="menu-toggle" class="menu-button">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+    
+    <nav class="main-navigation">
+      <ul class="nav-list">
+        {/* 添加调试信息 */}
+        {navigation.length > 0 ? (
+          navigation.map((item) => (
+            <li class="nav-item">
+              {item.children && item.children.length > 0 ? (
+                <div class="dropdown">
+                  <a href={item.url} class="nav-link dropdown-toggle">{item.name}</a>
+                  <div class="dropdown-content">
+                    {item.children.map((child) => (
+                      <a href={child.url} class="dropdown-link">{child.name}</a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a href={item.url} class="nav-link">{item.name}</a>
+              )}
+            </li>
+          ))
+        ) : (
+          <li class="nav-item">
+            <span class="nav-link">导航项为空</span>
+          </li>
+        )}
+        <li class="nav-item search-item">
+          <Search placeholder="搜索..." />
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

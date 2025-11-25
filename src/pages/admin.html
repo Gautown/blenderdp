@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/images/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="/images/logo.png">
+    <title>内容管理器</title>
+    <!-- 根据环境自动选择配置文件 -->
+    <script>
+      // 检查是否在本地开发模式下运行
+      const isLocal = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname === '0.0.0.0' ||
+                     new URLSearchParams(window.location.search).get('local') === 'true';
+      
+      // 动态设置配置文件URL
+      const configUrl = isLocal ? '/admin/config.local.yml' : '/admin/config.yml';
+      document.write('<link href="' + configUrl + '" type="text/yaml" rel="cms-config-url" />');
+    </script>
+    <link href="/admin/custom.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="nc-root"></div>
+    <!-- 使用CDN版本的Decap CMS以避免React版本冲突 -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // 等待DOM加载完成后初始化Decap CMS
+      document.addEventListener('DOMContentLoaded', function() {
+        // 检查Decap CMS是否已加载
+        if (typeof CMS !== 'undefined') {
+          console.log('Decap CMS loaded successfully');
+          
+          // 注册静态媒体库
+          CMS.registerMediaLibrary({
+            name: 'static',
+            init: function() {
+              console.log('Static media library initialized');
+              return Promise.resolve();
+            },
+            show: function() {
+              console.log('Static media library show called');
+              return Promise.resolve();
+            },
+            hide: function() {
+              console.log('Static media library hide called');
+              return Promise.resolve();
+            },
+            onShow: function(callback) {
+              console.log('Static media library onShow called');
+              return Promise.resolve();
+            },
+            onHide: function(callback) {
+              console.log('Static media library onHide called');
+              return Promise.resolve();
+            },
+            enableStandalone: function() {
+              console.log('Static media library enableStandalone called');
+              return Promise.resolve();
+            }
+          });
+          
+          // 在本地开发模式下注册本地后端
+          if (isLocal) {
+            CMS.registerBackend('local', {
+              init: function() {
+                console.log('Local backend initialized');
+                return Promise.resolve();
+              }
+            });
+          }
+        } else {
+          console.error('Decap CMS failed to load');
+        }
+      });
+    </script>
+  </body>
+</html>

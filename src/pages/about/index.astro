@@ -1,0 +1,45 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const abouts = await getCollection('about');
+---
+
+<MainLayout title="关于">
+  <Breadcrumb 
+    links={[
+      { href: '/', label: '首页' },
+      { href: '#', label: '关于' }
+    ]} 
+  />
+  
+  <h2>关于</h2>
+  
+  <div class="content-grid grid-5">
+    {abouts.map(about => (
+      <a href={`/about/${about.slug}`} class="content-card" aria-label={`查看关于页面：${about.data.title}`}>
+        <div class="card-image">
+          {about.data.thumbnail ? (
+            <img src={about.data.thumbnail} alt={about.data.title} />
+          ) : (
+            <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+          )}
+        </div>
+        <div class="card-content">
+          <span class="card-tag">关于</span>
+          <h3 class="card-title">{about.data.title}</h3>
+          <p class="card-date">未知日期</p>
+        </div>
+      </a>
+    ))}
+  </div>
+  
+  {abouts.length === 0 && (
+    <p style="text-align: center; margin-top: 2rem;">暂无关于页面</p>
+  )}
+</MainLayout>
+
+<style>
+  /* about页面特定样式可以保留 */
+</style>
