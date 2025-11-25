@@ -1,0 +1,14 @@
+# Ensure line endings are handled correctly
+* text=auto
+
+# Ensure that binary files are not modified
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
