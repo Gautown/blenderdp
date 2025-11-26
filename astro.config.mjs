@@ -7,11 +7,15 @@ import cloudflare from "@astrojs/cloudflare";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://example.com",
+   devToolbar: {
+      enabled: false
+    },
+  site: "https://gautown.top",
   integrations: [mdx(), sitemap()],
   adapter: cloudflare({
     platformProxy: {
       enabled: true,
     },
+   
   }),
 });

@@ -21,6 +21,7 @@
     "typescript": "5.8.3"
   },
   "devDependencies": {
+    "decap-server": "^3.4.0",
     "wrangler": "4.21.x"
   },
   "scripts": {
