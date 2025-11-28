@@ -1088,7 +1088,7 @@ th {
  
   .search-input {
     width: 100%;
-    max-width:720px;
+    min-width:460px;
   }
   /* 移动端隐藏Rollbar */
   .rollbar {
