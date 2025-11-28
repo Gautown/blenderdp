@@ -792,7 +792,10 @@ width: 100%;
   grid-row: 2 / 3;
 
 }
-
+.portfolio-content img {
+  width: 90%;
+  height: auto;
+}
 /* 确保Markdown加粗文本正确渲染 */
 .portfolio-content strong,
 .portfolio-content b {
