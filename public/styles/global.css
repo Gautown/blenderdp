@@ -1054,7 +1054,7 @@ th {
     top: 100%;
     left: 0;
     width: 100%;
-    background-color:var(--nav-bg);;
+    background:linear-gradient(to right, var(--vivid-blue), var(--Bright-violet));
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: none;
     z-index: 100;
