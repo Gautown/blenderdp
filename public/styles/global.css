@@ -421,7 +421,7 @@ body {
 
 /* 英雄区域 */
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%), ;
+ 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -1054,7 +1054,7 @@ th {
     top: 100%;
     left: 0;
     width: 100%;
-    background-color:var(--nav-bg);;
+    background:linear-gradient(to right, var(--vivid-blue), var(--Bright-violet));
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: none;
     z-index: 100;
@@ -1065,6 +1065,7 @@ th {
   }
   
   .nav-list {
+    
     flex-direction: column;
     align-items: stretch;
     padding: 1rem;
@@ -1087,7 +1088,7 @@ th {
  
   .search-input {
     width: 100%;
-    min-width: 600px;
+    max-width:720px;
   }
   /* 移动端隐藏Rollbar */
   .rollbar {
