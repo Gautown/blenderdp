@@ -266,29 +266,25 @@ body {
 
 /* 搜索项 */
 .search-item {
-  margin-left: 1rem;
+  margin: 0 1rem;
 }
 
 /* 搜索组件 */
 .search-container {
-  display: flex;
-  align-items: center;
-
+width: 100%;
 }
 
 .search-form {
   display: flex;
   align-items: center;
-  min-width: 300px;
+  justify-content: center;
 }
 
 .search-input {
   padding: 0.5rem;
   border: none;
-  border-radius:0;
-  font-size: 0.9rem;
-  width: 100%;
-  max-width:360px;
+  font-size: 1rem;
+width: 100%;
 }
 
 .search-button {
@@ -302,7 +298,7 @@ body {
   transition: background-color 0.2s ease;
 }
 .search-button i{
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 800;
 }
 .search-button:hover {
@@ -1065,7 +1061,6 @@ th {
   }
   
   .nav-list {
-    
     flex-direction: column;
     align-items: stretch;
     padding: 1rem;
@@ -1081,14 +1076,14 @@ th {
   }
  
   .search-item {
-    margin: 0.5rem 0;
-    display: flex;
-    justify-content: center;
+      display: flex;
+    justify-content: space-between;
+    align-self:stretch;
   }
  
   .search-input {
-    width: 100%;
-    min-width:460px;
+   flex: 1;
+  max-width:480px;
   }
   /* 移动端隐藏Rollbar */
   .rollbar {
@@ -1099,10 +1094,7 @@ th {
     padding: 0.5rem !important;
   }
   
-  .search-input {
-    max-width: 150px;
-  }
-  
+
   .grid-5 {
     grid-template-columns: 1fr;
   }
