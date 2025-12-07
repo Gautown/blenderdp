@@ -10,6 +10,6 @@
     "noEmit": true,
     "skipLibCheck": true
   },
-  "include": ["src", "astro.config.mjs", "src/env.d.ts"],
+  "include": ["src/**/*.astro", "src/**/*.ts", "src/**/*.tsx", "astro.config.mjs", "src/env.d.ts"],
   "exclude": ["dist", "node_modules"]
 }
