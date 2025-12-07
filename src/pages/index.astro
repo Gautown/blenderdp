@@ -39,29 +39,6 @@ function getTags(collectionType: string) {
     <p>{siteConfig?.data.subtitle}</p>
   </div>
   <div class="section">
-    <h2 class="section-title">资产库</h2>
-    <div class="content-grid grid-5">
-      {assetLibraries.map(assetLibrary => (
-        <a href={`/asset-library/${assetLibrary.id}`} class="content-card" aria-label={`查看资产库：${assetLibrary.data.title}`}>
-          <div class="card-image">
-            {assetLibrary.data.thumbnail ? (
-              <img src={assetLibrary.data.thumbnail} alt={assetLibrary.data.title} />
-            ) : (
-              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
-            )}
-          </div>
-          <div class="card-content">
-            <span class="card-tag">{getTags('asset-library')}</span>
-            <h3 class="card-title">{assetLibrary.data.title}</h3>
-            <p class="card-date">{formatDate(assetLibrary.data.date)}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-    <a href="/asset-library" class="view-all">查看所有资产库</a>
-  </div>
-  
-  <div class="section">
     <h2 class="section-title">模型</h2>
     <div class="content-grid grid-5">
       {models.map(model => (
@@ -83,7 +60,28 @@ function getTags(collectionType: string) {
     </div>
     <a href="/models" class="view-all">查看所有模型</a>
   </div>
-  
+  <div class="section">
+    <h2 class="section-title">资产库</h2>
+    <div class="content-grid grid-5">
+      {assetLibraries.map(assetLibrary => (
+        <a href={`/asset-library/${assetLibrary.id}`} class="content-card" aria-label={`查看资产库：${assetLibrary.data.title}`}>
+          <div class="card-image">
+            {assetLibrary.data.thumbnail ? (
+              <img src={assetLibrary.data.thumbnail} alt={assetLibrary.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('asset-library')}</span>
+            <h3 class="card-title">{assetLibrary.data.title}</h3>
+            <p class="card-date">{formatDate(assetLibrary.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/asset-library" class="view-all">查看所有资产库</a>
+  </div>  
   <div class="section">
     <h2 class="section-title">工具集</h2>
     <div class="content-grid grid-5">
