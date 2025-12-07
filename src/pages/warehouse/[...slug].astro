@@ -1,0 +1,139 @@
+---
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import { getCollection, getEntry, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const assetLibrary = await getCollection('asset-library');
+  
+  return assetLibrary.map(asset => ({
+    params: { slug: asset.slug },
+    props: { slug: asset.slug },
+  }));
+}
+
+const { slug } = Astro.props;
+const asset = await getEntry('asset-library', slug) as CollectionEntry<'asset-library'>;
+const { Content } = await render(asset);
+
+// 获取所有学习资料并按日期排序，获取最新的3篇
+const allStudyMaterials = await getCollection('study-materials');
+const sortedStudyMaterials = allStudyMaterials.sort((a, b) => {
+  const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
+const latestStudyMaterials = sortedStudyMaterials.slice(0, 3);
+
+// 获取随机推荐内容（示例数据）
+const randomRecommendations = [
+  { title: "推荐模型1", url: "/models", type: "模型" },
+  { title: "推荐工具1", url: "/tools", type: "工具" },
+  { title: "推荐学习资料1", url: "/study-materials", type: "学习资料" },
+];
+
+// 获取最新文章（学习资料合集）
+const latestArticles = latestStudyMaterials.map(studyMaterial => ({
+  title: studyMaterial.data.title,
+  url: `/study-materials/${studyMaterial.slug}`,
+  date: studyMaterial.data.date ? new Date(studyMaterial.data.date).toLocaleDateString('zh-CN') : '未知日期'
+}));
+
+// 获取热门标签（从实际内容中提取）
+// 收集所有内容的标签
+const allModels = await getCollection('models');
+const allTools = await getCollection('tools');
+const allStudyMaterialsCollection = await getCollection('study-materials');
+const allAssetLibraries = await getCollection('asset-library');
+
+// 提取所有标签并统计频率
+const tagCounts = new Map();
+
+// 处理模型标签
+allModels.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理工具标签
+allTools.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach(tag => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理学习资料标签
+allStudyMaterialsCollection.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理资产库标签
+allAssetLibraries.forEach(item => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 转换为数组并按频率排序，取前10个
+const popularTags = Array.from(tagCounts.entries())
+  .map(([name, count]) => ({ name, count, url: `/tags/${encodeURIComponent(name)}` }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
+---
+
+<ContentLayout 
+  title={asset.data.title}
+  description={asset.data.description}
+  breadcrumbLinks={[
+    { href: '/', label: '首页' },
+    { href: '/asset-library', label: '资产库' },
+    { href: '#', label: '正文' }
+  ]}
+  randomRecommendations={randomRecommendations}
+  latestArticles={latestArticles}
+  popularTags={popularTags}
+>
+  <article class="asset-detail">
+    <h1>{asset.data.title}</h1>
+    
+    <div class="asset-meta">
+      <p>{asset.data.date ? new Date(asset.data.date).toLocaleDateString('zh-CN') : ''}</p>
+      {asset.data.category && <p>分类: {asset.data.category}</p>}
+    </div>
+    
+    {/* 显示标签 */}
+    {asset.data.tags && asset.data.tags.length > 0 && (
+      <div class="asset-tags">
+        <h3>标签：</h3>
+        <div class="tag-list">
+          {asset.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    {asset.data.thumbnail && (
+      <img 
+        src={asset.data.thumbnail} 
+        alt={asset.data.title} 
+        class="asset-image"
+      />
+    )}
+    
+    <div class="asset-content">
+      <Content />
+    </div>
+  </article>
+</ContentLayout>
