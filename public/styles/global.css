@@ -16,6 +16,7 @@
   padding: 0;
   box-sizing: border-box;
   line-height: 1.5;
+  font-size: 14px; /* 设置默认字体大小 */
 }
 
 .bi::before,
@@ -553,11 +554,15 @@ width: 100%;
 }
 
 /* 关于部分 */
+.about-header h1{
+  font-size: 1.8rem;
+}
 .about-content {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   overflow: hidden;
+  padding: 2rem;
 }
 
 .about-wrapper {
@@ -606,7 +611,11 @@ width: 100%;
 .about-link:hover {
   background-color: #555;
 }
-
+.about-content p{
+  margin: 0;
+  line-height: 1.6;
+  text-indent: 2em;
+}
 /* 面包屑导航 */
 .breadcrumb {
   background-color: #fff;

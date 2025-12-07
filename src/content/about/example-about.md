@@ -22,4 +22,4 @@ Blender 作为开源免费的全能 3D 软件，凭借建模、动画、渲染�
 
 ## 联系我们
 
-如果您有任何问题或建议，请随时联系我们。
+Emaill:goghblog@hotmali.com。
