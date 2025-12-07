@@ -2,6 +2,7 @@
 title: 测试项目
 description: 这是一个用于测试的作品集项目
 thumbnail: /images/example.jpg
+category: 模型
 date: 2025-09-23T00:00:00Z
 ---
 

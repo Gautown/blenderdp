@@ -1,19 +1,23 @@
 ---
 import ContentLayout from '../../layouts/ContentLayout.astro';
-import { getCollection, getEntry, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const tools = await getCollection('tools');
-  return tools.map(tool => ({
-    params: { slug: tool.slug },
-    props: { slug: tool.slug },
+  const assetLibraries = await getCollection('asset-library');
+  return assetLibraries.map(assetLibrary => ({
+    params: { slug: assetLibrary.id.replace('.md', '') },
+    props: { assetLibrary },
   }));
 }
 
-const { slug } = Astro.props;
-const tool = await getEntry('tools', slug) as CollectionEntry<'tools'>;
-const { Content } = await render(tool);
+const { assetLibrary } = Astro.props;
+
+// 检查条目是否存在
+if (!assetLibrary) {
+  throw new Error(`Asset library entry not found`);
+}
+
+const { Content } = await render(assetLibrary);
 
 // 获取所有学习资料并按日期排序，获取最新的3篇
 const allStudyMaterials = await getCollection('study-materials');
@@ -42,8 +46,7 @@ const latestArticles = latestStudyMaterials.map(studyMaterial => ({
 // 收集所有内容的标签
 const allModels = await getCollection('models');
 const allTools = await getCollection('tools');
-// 修复：重命名变量以避免重复声明
-const allStudyMaterialsForTags = await getCollection('study-materials');
+// 修复：移除重复声明的allNotes变量
 const allAssetLibraries = await getCollection('asset-library');
 
 // 提取所有标签并统计频率
@@ -52,7 +55,7 @@ const tagCounts = new Map();
 // 处理模型标签
 allModels.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
-    item.data.tags.forEach(tag => {
+    item.data.tags.forEach((tag: string) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     });
   }
@@ -61,14 +64,14 @@ allModels.forEach(item => {
 // 处理工具标签
 allTools.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
-    item.data.tags.forEach(tag => {
+    item.data.tags.forEach((tag: string) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     });
   }
 });
 
 // 处理学习资料标签
-allStudyMaterialsForTags.forEach(item => {
+allStudyMaterials.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
@@ -93,11 +96,11 @@ const popularTags = Array.from(tagCounts.entries())
 ---
 
 <ContentLayout 
-  title={tool.data.title}
-  description={tool.data.description}
+  title={assetLibrary.data.title}
+  description={assetLibrary.data.description}
   breadcrumbLinks={[
     { href: '/', label: '首页' },
-    { href: '/tools', label: '工具' },
+    { href: '/asset-library', label: '资产库' },
     { href: '#', label: '正文' }
   ]}
   randomRecommendations={randomRecommendations}
@@ -105,28 +108,28 @@ const popularTags = Array.from(tagCounts.entries())
   popularTags={popularTags}
 >
   <article class="model-detail">
-    <h1>{tool.data.title}</h1>
+    <h1>{assetLibrary.data.title}</h1>
     
     <div class="model-meta">
-      <p>{tool.data.date ? new Date(tool.data.date).toLocaleDateString('zh-CN') : ''}</p>
+      <p>{assetLibrary.data.date ? new Date(assetLibrary.data.date).toLocaleDateString('zh-CN') : ''}</p>
     </div>
     
     {/* 显示标签 */}
-    {tool.data.tags && tool.data.tags.length > 0 && (
+    {assetLibrary.data.tags && Array.isArray(assetLibrary.data.tags) && assetLibrary.data.tags.length > 0 && (
       <div class="model-tags">
         <h3>标签：</h3>
         <div class="tag-list">
-          {tool.data.tags.map(tag => (
+          {assetLibrary.data.tags.map((tag: string) => (
             <span class="tag">{tag}</span>
           ))}
         </div>
       </div>
     )}
     
-    {tool.data.thumbnail && (
+    {assetLibrary.data.thumbnail && (
       <img 
-        src={tool.data.thumbnail} 
-        alt={tool.data.title} 
+        src={assetLibrary.data.thumbnail} 
+        alt={assetLibrary.data.title} 
         class="model-image"
 
       />

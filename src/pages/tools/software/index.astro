@@ -24,7 +24,7 @@ const tools = (await getCollection('tools')).filter(item => item.data.category =
           <img 
             src={tool.data.thumbnail || "/images/noimg.gif"} 
             alt={tool.data.title} 
-            onerror="this.src='/images/noimg.gif'" 
+ 
             class="placeholder-image" 
           />
         </div>

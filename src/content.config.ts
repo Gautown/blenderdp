@@ -6,13 +6,7 @@ function parseTags(tagsString: string | undefined): string[] {
   return tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
 }
 
-// 标签反向解析函数：将标签数组转换为逗号分隔的字符串
-function stringifyTags(tagsArray: string[] | undefined): string {
-  if (!tagsArray || tagsArray.length === 0) return '';
-  return tagsArray.join(', ');
-}
-
-const notes = defineCollection({
+const studyMaterials = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
@@ -23,13 +17,14 @@ const notes = defineCollection({
   }),
 });
 
-const portfolio = defineCollection({
+const models = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
     description: z.string(),
     thumbnail: z.string().optional(),
     tags: z.string().optional().transform(parseTags),
+    category: z.string().optional(),
     date: z.date().optional(),
   }),
 });
@@ -46,7 +41,7 @@ const tools = defineCollection({
   }),
 });
 
-const warehouse = defineCollection({
+const assetLibrary = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
@@ -96,10 +91,11 @@ const siteConfig = defineCollection({
 });
 
 export const collections = {
-  notes,
-  portfolio,
-  tools,
-  warehouse,
-  about,
+  // 注意：这里使用连字符命名以匹配实际文件夹名称
+  'study-materials': studyMaterials,
+  models: models,
+  tools: tools,
+  'asset-library': assetLibrary,
+  about: about,
   'site-config': siteConfig,
 };

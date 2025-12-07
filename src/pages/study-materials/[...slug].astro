@@ -1,19 +1,17 @@
 ---
 import ContentLayout from '../../layouts/ContentLayout.astro';
-import { getCollection, getEntry, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const tools = await getCollection('tools');
-  return tools.map(tool => ({
-    params: { slug: tool.slug },
-    props: { slug: tool.slug },
+  const studyMaterials = await getCollection('study-materials');
+  return studyMaterials.map(studyMaterial => ({
+    params: { slug: studyMaterial.id },
+    props: { studyMaterial },
   }));
 }
 
-const { slug } = Astro.props;
-const tool = await getEntry('tools', slug) as CollectionEntry<'tools'>;
-const { Content } = await render(tool);
+const { studyMaterial } = Astro.props;
+const { Content } = await render(studyMaterial);
 
 // 获取所有学习资料并按日期排序，获取最新的3篇
 const allStudyMaterials = await getCollection('study-materials');
@@ -26,24 +24,23 @@ const latestStudyMaterials = sortedStudyMaterials.slice(0, 3);
 
 // 获取随机推荐内容（示例数据）
 const randomRecommendations = [
-  { title: "推荐作品1", url: "/portfolio", type: "作品" },
+  { title: "推荐模型1", url: "/models", type: "模型" },
   { title: "推荐工具1", url: "/tools", type: "工具" },
   { title: "推荐学习资料1", url: "/study-materials", type: "学习资料" },
 ];
 
-// 获取最新文章（学习资料合集）
-const latestArticles = latestStudyMaterials.map(studyMaterial => ({
-  title: studyMaterial.data.title,
-  url: `/study-materials/${studyMaterial.id}`,
-  date: studyMaterial.data.date ? new Date(studyMaterial.data.date).toLocaleDateString('zh-CN') : '未知日期'
+// 获取最新文章（笔记合集）
+const latestArticles = latestStudyMaterials.map(item => ({
+  title: item.data.title,
+  url: `/study-materials/${item.id}`,
+  date: item.data.date ? new Date(item.data.date).toLocaleDateString('zh-CN') : '未知日期'
 }));
 
 // 获取热门标签（从实际内容中提取）
 // 收集所有内容的标签
 const allModels = await getCollection('models');
 const allTools = await getCollection('tools');
-// 修复：重命名变量以避免重复声明
-const allStudyMaterialsForTags = await getCollection('study-materials');
+const allStudyMaterialsData = await getCollection('study-materials');
 const allAssetLibraries = await getCollection('asset-library');
 
 // 提取所有标签并统计频率
@@ -68,7 +65,7 @@ allTools.forEach(item => {
 });
 
 // 处理学习资料标签
-allStudyMaterialsForTags.forEach(item => {
+allStudyMaterialsData.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
@@ -93,11 +90,11 @@ const popularTags = Array.from(tagCounts.entries())
 ---
 
 <ContentLayout 
-  title={tool.data.title}
-  description={tool.data.description}
+  title={studyMaterial.data.title}
+  description={studyMaterial.data.description}
   breadcrumbLinks={[
     { href: '/', label: '首页' },
-    { href: '/tools', label: '工具' },
+    { href: '/study-materials', label: '学习资料' },
     { href: '#', label: '正文' }
   ]}
   randomRecommendations={randomRecommendations}
@@ -105,31 +102,22 @@ const popularTags = Array.from(tagCounts.entries())
   popularTags={popularTags}
 >
   <article class="model-detail">
-    <h1>{tool.data.title}</h1>
+    <h1>{studyMaterial.data.title}</h1>
     
     <div class="model-meta">
-      <p>{tool.data.date ? new Date(tool.data.date).toLocaleDateString('zh-CN') : ''}</p>
+      <p>{studyMaterial.data.date ? new Date(studyMaterial.data.date).toLocaleDateString('zh-CN') : ''}</p>
     </div>
     
     {/* 显示标签 */}
-    {tool.data.tags && tool.data.tags.length > 0 && (
+    {studyMaterial.data.tags && Array.isArray(studyMaterial.data.tags) && studyMaterial.data.tags.length > 0 && (
       <div class="model-tags">
         <h3>标签：</h3>
         <div class="tag-list">
-          {tool.data.tags.map(tag => (
+          {studyMaterial.data.tags.map((tag: string) => (
             <span class="tag">{tag}</span>
           ))}
         </div>
       </div>
-    )}
-    
-    {tool.data.thumbnail && (
-      <img 
-        src={tool.data.thumbnail} 
-        alt={tool.data.title} 
-        class="model-image"
-
-      />
     )}
     
     <div class="model-content">

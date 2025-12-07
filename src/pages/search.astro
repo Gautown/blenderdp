@@ -3,10 +3,10 @@ import MainLayout from '../layouts/MainLayout.astro';
 import { getCollection, getEntry } from 'astro:content';
 
 // 获取所有内容集合
-const notes = await getCollection('notes');
-const portfolios = await getCollection('portfolio');
+const studyMaterials = await getCollection('study-materials');
+const models = await getCollection('models');
 const tools = await getCollection('tools');
-const warehouses = await getCollection('warehouse');
+const assetLibraries = await getCollection('asset-library');
 const abouts = await getCollection('about');
 
 // 获取站点配置
@@ -25,22 +25,43 @@ function formatDate(date: Date | string | undefined) {
 // 获取标签的辅助函数（根据集合类型）
 function getTags(collectionType: string) {
   const tags: Record<string, string> = {
-    'warehouse': '仓库',
-    'portfolio': '作品',
+    'asset-library': '资产库',
+    'models': '模型',
     'tools': '工具',
-    'notes': '笔记',
+    'study-materials': '学习资料',
     'about': '关于'
   };
   return tags[collectionType] || '内容';
 }
 
 // 获取所有内容项
+// 为不同类型的项目创建统一的结构
 const allItems = [
-  ...notes.map(item => ({ ...item, type: 'notes' })),
-  ...portfolios.map(item => ({ ...item, type: 'portfolio' })),
-  ...tools.map(item => ({ ...item, type: 'tools' })),
-  ...warehouses.map(item => ({ ...item, type: 'warehouse' })),
-  ...abouts.map(item => ({ ...item, type: 'about' }))
+  ...studyMaterials.map(item => ({ 
+    ...item, 
+    type: 'study-materials',
+    identifier: item.id  // 学习资料使用id
+  })),
+  ...models.map(item => ({ 
+    ...item, 
+    type: 'models',
+    identifier: item.id  // 模型使用id
+  })),
+  ...tools.map(item => ({ 
+    ...item, 
+    type: 'tools',
+    identifier: item.id  // 工具使用id
+  })),
+  ...assetLibraries.map(item => ({ 
+    ...item, 
+    type: 'asset-library',
+    identifier: item.id  // 资产库使用id
+  })),
+  ...abouts.map(item => ({ 
+    ...item, 
+    type: 'about',
+    identifier: item.id  // 关于使用id
+  }))
 ];
 
 // 搜索功能
@@ -69,11 +90,13 @@ const searchResults = query ? allItems.filter(item => {
         <div class="search-results">
           {searchResults.map((item) => {
             const basePath = `/${item.type}`;
-            const itemPath = `${basePath}/${item.slug}`;
+            const itemPath = `${basePath}/${item.identifier}`;
             const tag = getTags(item.type);
             
+
+            
             return (
-              <a href={itemPath} class="search-result-item" key={`${item.type}-${item.slug}`} aria-label={`查看${tag}：${item.data.title}`}>
+              <a href={itemPath} class="search-result-item" data-key={`${item.type}-${item.identifier}`} aria-label={`查看${tag}：${item.data.title}`}>
                 <div class="result-content">
                   <div class="result-meta">
                     <span class="result-tag">{tag}</span>

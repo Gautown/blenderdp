@@ -10,8 +10,8 @@
       "url": "/"
     },
     {
-      "name": "作品",
-      "url": "/portfolio"
+      "name": "模型",
+      "url": "/models"
     },
     {
       "name": "工具",
@@ -28,26 +28,22 @@
       ]
     },
     {
-      "name": "仓库",
-      "url": "/warehouse",
+      "name": "资产库",
+      "url": "/asset-library",
       "children": [
         {
-          "name": "模型",
-          "url": "/warehouse/models"
-        },
-        {
           "name": "贴图",
-          "url": "/warehouse/textures"
+          "url": "/asset-library/textures"
         },
         {
           "name": "HDRIs",
-          "url": "/warehouse/hdris"
+          "url": "/asset-library/hdris"
         }
       ]
     },
     {
-      "name": "笔记",
-      "url": "/notes"
+      "name": "学习资料",
+      "url": "/study-materials"
     },
     {
       "name": "关于",
@@ -55,7 +51,7 @@
     }
   ],
   "subtitle": "免费学习、交流，模型、插件下载站",
-  "title": "樘高设计干货分享",
+  "title": "斑斓设绘交流窝",
   "friendLinks": [
     {
       "name": "Github",

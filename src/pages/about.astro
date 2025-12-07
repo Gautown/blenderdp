@@ -1,0 +1,169 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+// 获取关于页面内容
+const aboutEntries = await getCollection('about');
+let aboutEntry: CollectionEntry<'about'> | null = null;
+let ContentComponent: any;
+
+// 获取所有内容以生成侧边栏数据
+const allModels = await getCollection('models');
+const allTools = await getCollection('tools');
+const allStudyMaterials = await getCollection('study-materials');
+const allAssetLibraries = await getCollection('asset-library');
+
+// 获取随机推荐内容
+const randomRecommendations = [
+  { title: "推荐模型1", url: "/models", type: "模型" },
+  { title: "推荐工具1", url: "/tools", type: "工具" },
+  { title: "推荐学习资料1", url: "/study-materials", type: "学习资料" },
+];
+
+// 获取最新文章（从各个分类中获取最新的）
+const allContent = [
+  ...allModels.map(item => ({ ...item, type: '模型' })),
+  ...allTools.map(item => ({ ...item, type: '工具' })),
+  ...allStudyMaterials.map(item => ({ ...item, type: '学习资料' })),
+  ...allAssetLibraries.map(item => ({ ...item, type: '资产库' }))
+];
+
+// 按日期排序并获取最新的3篇
+const latestArticles = allContent
+  .sort((a, b) => {
+    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return dateB - dateA;
+  })
+  .slice(0, 3)
+  .map(item => ({
+    title: item.data.title,
+    url: `/${item.collection}/${item.id}`,
+    date: item.data.date ? new Date(item.data.date).toLocaleDateString('zh-CN') : '未知日期'
+  }));
+
+// 获取热门标签（从实际内容中提取）
+// 提取所有标签并统计频率
+const tagCounts = new Map();
+
+// 处理模型标签
+allModels.forEach((item: any) => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理工具标签
+allTools.forEach((item: any) => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理学习资料标签
+allStudyMaterials.forEach((item: any) => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 处理资产库标签
+allAssetLibraries.forEach((item: any) => {
+  if (item.data.tags && Array.isArray(item.data.tags)) {
+    item.data.tags.forEach((tag: string) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    });
+  }
+});
+
+// 转换为数组并按频率排序，取前10个
+const popularTags = Array.from(tagCounts.entries())
+  .map(([name, count]) => ({ name, count, url: `/tags/${encodeURIComponent(name)}` }))
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 10);
+
+// 获取第一个关于页面条目
+if (aboutEntries.length > 0) {
+  aboutEntry = aboutEntries[0];
+  // 渲染内容
+  try {
+    const rendered = await render(aboutEntry);
+    ContentComponent = rendered.Content;
+  } catch (error) {
+    console.error('渲染关于页面内容时出错:', error);
+  }
+}
+---
+
+<ContentLayout 
+  title={aboutEntry?.data.title || "关于我们"}
+  description={aboutEntry?.data.description || "关于我们的页面"}
+  breadcrumbLinks={[
+    { href: '/', label: '首页' },
+    { href: '#', label: '关于' }
+  ]}
+  randomRecommendations={randomRecommendations}
+  latestArticles={latestArticles}
+  popularTags={popularTags}
+>
+  <div class="about-page">
+    <div class="about-header">
+      <h1>{aboutEntry?.data.title || "关于我们"}</h1>
+    </div>
+    
+    {aboutEntry && ContentComponent ? (
+      <div class="about-content">
+        <div class="about-meta">
+          <p>{aboutEntry.data.date ? new Date(aboutEntry.data.date).toLocaleDateString('zh-CN') : ''}</p>
+        </div>
+        
+        <div class="about-body">
+          <article>
+            <ContentComponent />
+          </article>
+        </div>
+      </div>
+    ) : (
+      <div class="about-placeholder">
+        <p>暂无关于页面内容</p>
+      </div>
+    )}
+  </div>
+</ContentLayout>
+
+<style>
+  .about-page {
+    padding: 2rem;
+  }
+  
+  .about-header h1 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .about-meta {
+    color: #666;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .about-body {
+    line-height: 1.8;
+  }
+  
+  .about-placeholder {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+  }
+</style>
