@@ -418,7 +418,7 @@ width: 100%;
 }
 .section-title::after {
   position: relative;
-  content: "——";
+  content: "————";
   color: var(--vivid-blue);
   display: block;
   width: 100%;
