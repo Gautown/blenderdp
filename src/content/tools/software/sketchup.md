@@ -35,11 +35,11 @@ SketchUp 最初由 Last Software 公司开发，2006 年被谷歌公司收购，
 
 #### for Windows 
 
-[SketchUp 2024 Windows 64 Bit](https://download.sketchup.com/SketchUp-2024-0-594-241.exe)
+[SketchUp 2026  离线安装程序 for Windows](https://download.sketchup.com/SketchUpFull-2026-1-185-44.exe)
 
 [SketchUp 2025 离线安装程序](https://download.sketchup.com/SketchUpFull-2025-0-660-288.exe)
 
-[SketchUp-2024-0-594-241](https://download.sketchup.com/SketchUp-2024-0-594-241.exe)
+[ SketchUp-2024-0-594-241](https://download.sketchup.com/SketchUp-2024-0-594-241.exe)
 
 [SketchUpStudio-2023-1-340-117](https://download.sketchup.com/SketchUpStudio-2023-1-340-117.exe)
 
@@ -52,3 +52,11 @@ SketchUp 最初由 Last Software 公司开发，2006 年被谷歌公司收购，
 [SketchUp-2024-0-594-241](https://download.sketchup.com/SketchUp-2024-0-598-243.dmg)
 
 [SketchUpStudio-2023-1-340-117](https://download.sketchup.com/SketchUpPro-2023-1-341-117.dmg)
+
+---
+#### Crack
+使用说明：复制到安装目录替换同名文件即可！  
+[Crack 2025-2026](https://zencomcnlive-my.sharepoint.com/personal/gautown_zencomcnlive_onmicrosoft_com/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fgautown%5Fzencomcnlive%5Fonmicrosoft%5Fcom%2FDocuments%2FAssets%2Fsoftware%2F3D%20modeling%2FSketchUp%2FSetUp%2FCrack2025%2D2026%2Ezip)
+
+[Crack 2023-2024](https://zencomcnlive-my.sharepoint.com/personal/gautown_zencomcnlive_onmicrosoft_com/_layouts/15/download.aspx?SourceUrl=%2Fpersonal%2Fgautown%5Fzencomcnlive%5Fonmicrosoft%5Fcom%2FDocuments%2FAssets%2Fsoftware%2F3D%20modeling%2FSketchUp%2FSetUp%2FCrack2023%2D2024%2Ezip)
+

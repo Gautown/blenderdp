@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../../layouts/ContentLayout.astro';
+import Comments from '../../components/Comments.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -138,6 +139,8 @@ const popularTags = Array.from(tagCounts.entries())
     <div class="model-content">
       <Content />
     </div>
+    
+    <Comments />
   </article>
 </ContentLayout>
 

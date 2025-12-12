@@ -60,7 +60,20 @@ Blender 的动画功能覆盖角色、机械、镜头等多维度动画创作：
 * 专业团队：影视、游戏公司用于前期概念设计、动画预演，或配合其他软件（如 Maya、3ds Max）提升效率；
 * 教育与科研：高校用于 3D 设计、计算机图形学教学，科研领域用于模拟实验（如物理运动、建筑结构）。
 ### 下载链接
-[Blender 4.5.3 LTS](https://www.blender.org/download/releases/4-5/)
+---
+#### for Windows
+---
+[Blender 5.0](https://www.blender.org/download/release/Blender5.0/blender-5.0.0-windows-x64.zip/)
+
+[Blender 4.5.3 LTS ](https://www.blender.org/download/releases/4-5/)
 
 
-[Blender 4.4](https://www.blender.org/download/)
+#### for MACOS   
+ --- 
+[Blender 5.0](https://www.blender.org/download/release/Blender5.0/blender-5.0.0-macos-arm64.dmg/)
+
+#### for Linux  
+---
+[Blender 5.0 ](https://www.blender.org/download/release/Blender5.0/blender-5.0.0-linux-x64.tar.xz/)
+
+

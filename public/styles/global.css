@@ -16,7 +16,6 @@
   padding: 0;
   box-sizing: border-box;
   line-height: 1.5;
-  font-size: 14px; /* 设置默认字体大小 */
 }
 
 .bi::before,
@@ -51,8 +50,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   line-height: 1.6;
   color: #333;
-  margin: 0;
-  padding: 0;
+  font-size: 16px; /* 设置默认字体大小 */
 }
 
 /* 页面顶部锚点 */
@@ -868,7 +866,16 @@ object-fit: cover; /* 让图片按比例缩放，填满盒子 */
   grid-row: 1 / 2;
 
 }
-
+.model-detail p a{
+ /* line-height: 3; */
+}
+.model-detail p a:before{
+  content:' \F294 ';
+  font-family: "bootstrap-icons";
+  font-size: 1.5rem;
+  margin-right:.5rem;
+  padding-top:1.5rem;
+}
 .model-meta {
    text-align: center;
   color: #7f8c8d;

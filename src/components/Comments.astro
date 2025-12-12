@@ -1,0 +1,38 @@
+---
+import 'giscus';
+
+interface Props {
+  term?: string;
+  category?: string;
+}
+
+const { term = '', category = '' } = Astro.props;
+---
+
+<div class="comments-section">
+  <h2>评论</h2>
+  <giscus-widget
+    repo="Gautown/blenderdp"
+    repoId="YOUR_REPO_ID"
+    category="Announcements"
+    categoryId="YOUR_CATEGORY_ID"
+    mapping="pathname"
+    term={term}
+    theme="light"
+    reactionsEnabled="1"
+    emitMetadata="0"
+  />
+</div>
+
+<style>
+  .comments-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .comments-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+</style>
