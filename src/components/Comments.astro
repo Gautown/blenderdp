@@ -10,9 +10,7 @@ const { term = '', category = '' } = Astro.props;
 <div class="comments-section">
   <h2>评论</h2>
   <!-- Giscus组件将在客户端加载 -->
-  <script 
-    client:load
-    src="https://giscus.app/client.js"
+ <script src="https://giscus.app/client.js"
     data-repo="Gautown/blenderdp"
     data-repo-id="R_kgDOQcA4pw"
     data-category="Announcements"
@@ -21,7 +19,7 @@ const { term = '', category = '' } = Astro.props;
     data-strict="0"
     data-reactions-enabled="1"
     data-emit-metadata="0"
-    data-input-position="top"
+    data-input-position="bottom"
     data-theme="light"
     data-lang="zh-CN"
     crossorigin="anonymous"
@@ -34,7 +32,6 @@ const { term = '', category = '' } = Astro.props;
 <style>
   .comments-section {
     margin-top: 2rem;
-    padding-top: 2rem;
     border-top: 1px solid #eee;
   }
   
