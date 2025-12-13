@@ -1,6 +1,4 @@
 ---
-import 'giscus';
-
 interface Props {
   term?: string;
   category?: string;
@@ -11,21 +9,24 @@ const { term = '', category = '' } = Astro.props;
 
 <div class="comments-section">
   <h2>评论</h2>
-<script src="https://giscus.app/client.js"
-        data-repo="Gautown/blenderdp"
-        data-repo-id="R_kgDOQcA4pw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDOQcA4p84CztQg"
-        data-mapping="pathname"
-        data-strict="1"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="light"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+  <!-- Giscus组件将在客户端加载 -->
+  <script 
+    client:load
+    src="https://giscus.app/client.js"
+    data-repo="Gautown/blenderdp"
+    data-repo-id="R_kgDOQcA4pw"
+    data-category="Announcements"
+    data-category-id="DIC_kwDOQcA4p84CztQg"
+    data-mapping="pathname"
+    data-strict="1"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="light"
+    data-lang="zh-CN"
+    crossorigin="anonymous"
+    async>
+  </script>
 </div>
 
 <style>
