@@ -75,7 +75,6 @@ body {
 .main-content {
   max-width: 1440px;
   margin: 0 auto;
- 
 }
 
 /* 网站头部 */
@@ -866,9 +865,7 @@ object-fit: cover; /* 让图片按比例缩放，填满盒子 */
   grid-row: 1 / 2;
 
 }
-.model-detail p a{
- /* line-height: 3; */
-}
+
 .model-detail p a:before{
   content:' \F294 ';
   font-family: "bootstrap-icons";
