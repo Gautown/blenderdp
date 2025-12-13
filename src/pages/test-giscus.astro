@@ -29,6 +29,19 @@ import Comments from '../components/Comments.astro';
         margin: 1rem 0;
         border-radius: 0 4px 4px 0;
       }
+      .debug-info {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .debug-info h3 {
+        margin-top: 0;
+      }
+      .debug-info ul {
+        margin-bottom: 0;
+      }
     </style>
   </head>
   <body>
@@ -55,9 +68,31 @@ import Comments from '../components/Comments.astro';
       </ul>
     </div>
     
+    <div class="debug-info">
+      <h3>当前Giscus配置信息</h3>
+      <ul>
+        <li><strong>Repository:</strong> Gautown/blenderdp</li>
+        <li><strong>Repo ID:</strong> R_kgDOQcA4pw</li>
+        <li><strong>Category:</strong> Announcements</li>
+        <li><strong>Category ID:</strong> DIC_kwDOQcA4p84CztQg</li>
+        <li><strong>Mapping:</strong> pathname</li>
+        <li><strong>Strict:</strong> 0</li>
+      </ul>
+    </div>
+    
     <h2>评论测试区域</h2>
     <p>如果配置正确，下方应显示评论区域和输入框：</p>
     
     <Comments />
+    
+    <div style="margin-top: 2rem; padding: 1rem; background-color: #e8f4fd; border-left: 4px solid #007acc;">
+      <h3>测试说明</h3>
+      <p>如果您已经正确登录并授权，但仍看不到评论内容：</p>
+      <ol>
+        <li>请尝试在下方留下一条测试评论</li>
+        <li>评论后刷新页面，查看评论是否显示</li>
+        <li>如果评论仍然不显示，请检查网络控制台是否有错误信息</li>
+      </ol>
+    </div>
   </body>
 </html>
