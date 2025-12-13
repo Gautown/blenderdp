@@ -1117,6 +1117,7 @@ th {
   .gsc-reactions {
     display: none;
   }
+  
 /* 响应式断点 - 移动端 ( <= 768px ) */
 @media (max-width: 768px) {
   .header-container {
