@@ -2,7 +2,7 @@
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Gautown/blenderdp)
 
-![GauTown Studio Preview](/images/preview.webp)
+![GauTown Studio Preview](/public/images/preview.webp)
 
 一个基于 Astro 构建的现代化内容管理系统，专为设计师、开发者和技术爱好者打造的知识分享平台。
 
