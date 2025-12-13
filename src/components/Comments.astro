@@ -28,18 +28,8 @@ const { term = '', category = '' } = Astro.props;
     async>
   </script>
   
-  <!-- 调试信息 -->
-  <div id="giscus-debug" style="margin-top: 1rem; padding: 1rem; background-color: #f0f8ff; border: 1px solid #007acc; border-radius: 4px;">
-    <h3>评论系统调试信息</h3>
-    <p>如果您看不到评论框，请检查以下事项：</p>
-    <ol>
-      <li>确保您已登录GitHub账户</li>
-      <li>点击评论区域内的"Sign in with GitHub"按钮</li>
-      <li>授权Giscus应用访问您的GitHub账户</li>
-      <li>刷新页面后应能看到评论输入框</li>
-    </ol>
-    <p>如果仍然无法显示输入框，请联系网站管理员。</p>
-  </div>
+  <!-- 添加一个容器，用于显示Giscus -->
+  <div class="giscus"></div>
 </div>
 
 <style>
