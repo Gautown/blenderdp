@@ -2,7 +2,7 @@
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Gautown/blenderdp)
 
-![GauTown Studio Preview](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/f40a6577-eed5-4f3e-cef4-b5ef0a1be100/preview)
+![GauTown Studio Preview](/images/preview.webp)
 
 一个基于 Astro 构建的现代化内容管理系统，专为设计师、开发者和技术爱好者打造的知识分享平台。
 
@@ -113,7 +113,7 @@ npm run deploy
 
 项目集成了 Decap CMS，可通过 `/admin` 路径访问内容管理系统：
 
-- 生产环境: https://Your domain name/admin
+- 生产环境: https://gautown.top/admin
 - 本地开发: http://localhost:8081/admin
 
 CMS 配置文件位于 `public/admin/` 目录：
@@ -140,7 +140,9 @@ CMS 配置文件位于 `public/admin/` 目录：
 
 ## 📄 许可证
 
-本项目基于 ISC 许可证开源。
+本项目基于 Apache License 2.0 开源。
+
+有关许可证的详细信息，请参阅 [LICENSE](LICENSE) 文件。
 
 ## 🙏 致谢
 
