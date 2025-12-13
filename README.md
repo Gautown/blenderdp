@@ -113,7 +113,7 @@ npm run deploy
 
 项目集成了 Decap CMS，可通过 `/admin` 路径访问内容管理系统：
 
-- 生产环境: https://gautown.top/admin
+- 生产环境: https:// Your domain name/admin
 - 本地开发: http://localhost:8081/admin
 
 CMS 配置文件位于 `public/admin/` 目录：
