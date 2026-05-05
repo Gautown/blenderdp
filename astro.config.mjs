@@ -16,6 +16,7 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
+    prerenderEnvironment: 'node',
   }),
   output: 'server',
   vite: {

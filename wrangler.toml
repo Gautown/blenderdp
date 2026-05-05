@@ -3,14 +3,15 @@ compatibility_date = "2025-10-08"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
 
-# 禁用自动生成的 KV 命名空间，因为 Pages 项目不需要
-kv_namespaces = []
+# KV 命名空间配置 - 使用占位符 ID，实际 ID 会在 Cloudflare Pages 中自动配置
+[[kv_namespaces]]
+binding = "MY_SESSION_KV"
+id = "placeholder_id"
 
 # 使用自定义的 Assets 绑定名称，避免使用保留的 "ASSETS"
-assets = { binding = "STATIC_ASSETS", directory = "./dist/client" }
-
-# 禁用图像处理，因为 Pages 项目不需要
-images = { binding = "" }
+[assets]
+binding = "STATIC_ASSETS"
+directory = "./dist/client"
 
 [vars]
 NODE_VERSION = "22"
