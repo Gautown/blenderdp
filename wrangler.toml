@@ -3,5 +3,14 @@ compatibility_date = "2025-10-08"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
 
+# 禁用自动生成的 KV 命名空间，因为 Pages 项目不需要
+kv_namespaces = []
+
+# 使用自定义的 Assets 绑定名称，避免使用保留的 "ASSETS"
+assets = { binding = "STATIC_ASSETS", directory = "./dist/client" }
+
+# 禁用图像处理，因为 Pages 项目不需要
+images = { binding = "" }
+
 [vars]
 NODE_VERSION = "22"
