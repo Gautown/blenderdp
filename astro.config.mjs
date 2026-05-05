@@ -13,10 +13,6 @@ export default defineConfig({
   site: "https://gautown.top",
   integrations: [mdx(), sitemap()],
   adapter: cloudflare({
-    sessionKVBindingName: "MY_SESSION_KV",
-    assets: {
-      bindingName: "MY_ASSETS",
-    },
     platformProxy: {
       enabled: true,
     },
