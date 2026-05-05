@@ -1,0 +1,89 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const models = await getCollection('models');
+---
+
+<MainLayout title="模型管理 - Pages CMS" description="管理模型内容">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>模型管理</h1>
+      <p>共 {models.length} 个模型</p>
+      <a href="https://app.pagescms.org/" target="_blank" class="btn-primary">在 Pages CMS 中编辑</a>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-content">
+        {models.length > 0 ? (
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>标题</th>
+                <th>描述</th>
+                <th>标签</th>
+                <th>日期</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {models.map(model => (
+                <tr>
+                  <td class="title-cell">
+                    <a href={`/models/${model.slug}`} target="_blank">{model.data.title}</a>
+                  </td>
+                  <td class="desc-cell">{model.data.description}</td>
+                  <td>
+                    {model.data.tags && model.data.tags.length > 0 ? (
+                      <div class="tags">
+                        {model.data.tags.map(tag => (
+                          <span class="tag">{tag}</span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span class="no-tags">无标签</span>
+                    )}
+                  </td>
+                  <td>{model.data.date ? new Date(model.data.date).toLocaleDateString('zh-CN') : '-'}</td>
+                  <td>
+                    <div class="actions">
+                      <a href={`/models/${model.slug}`} target="_blank" class="action-btn view-btn">查看</a>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="empty-message">暂无模型内容</p>
+        )}
+      </div>
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .cms-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+  .page-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 2rem; text-align: center; }
+  .page-header h1 { font-size: 2rem; color: #333; margin-bottom: 0.5rem; }
+  .page-header p { color: #666; margin-bottom: 1rem; }
+  .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.3s ease; }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .content-list { background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+  .list-content { padding: 1.5rem; }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { background: #f5f5f5; padding: 0.75rem; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #e0e0e0; }
+  .data-table td { padding: 0.75rem; border-bottom: 1px solid #e0e0e0; }
+  .data-table tr:hover { background: #f9f9f9; }
+  .title-cell a { color: #007acc; text-decoration: none; font-weight: 500; }
+  .title-cell a:hover { text-decoration: underline; }
+  .desc-cell { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  .tag { background: #e3f2fd; color: #1976d2; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+  .no-tags { color: #999; font-size: 0.875rem; }
+  .actions { display: flex; gap: 0.5rem; }
+  .action-btn { padding: 0.3rem 0.75rem; border-radius: 4px; text-decoration: none; font-size: 0.875rem; }
+  .view-btn { background: #e8f5e9; color: #2e7d32; }
+  .view-btn:hover { background: #c8e6c9; }
+  .empty-message { text-align: center; color: #666; padding: 2rem; }
+</style>

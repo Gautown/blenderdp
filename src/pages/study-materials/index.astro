@@ -23,14 +23,13 @@ const studyMaterials = await getCollection('study-materials');
           <img 
             src={studyMaterial.data.thumbnail || "/images/noimg.gif"} 
             alt={studyMaterial.data.title} 
- 
             class="placeholder-image" 
           />
         </div>
         <div class="card-content">
           <span class="card-tag">学习资料</span>
           <h3 class="card-title">{studyMaterial.data.title}</h3>
-          <p class="card-date">未知日期</p>
+          <p class="card-date">{studyMaterial.data.date ? new Date(studyMaterial.data.date).toLocaleDateString('zh-CN') : '未知日期'}</p>
         </div>
       </a>
     ))}
@@ -42,5 +41,4 @@ const studyMaterials = await getCollection('study-materials');
 </MainLayout>
 
 <style>
-  /* study-materials页面特定样式可以保留 */
 </style>

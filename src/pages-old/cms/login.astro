@@ -1,0 +1,237 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="CMS登录 - Pages CMS" description="Pages CMS 1.0 登录">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <img src="/images/logo.svg" alt="GauTown Studio" class="login-logo" />
+        <h1>Pages CMS 1.0</h1>
+        <p>内容管理系统登录</p>
+      </div>
+      
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="请输入用户名" 
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="请输入密码" 
+            required
+          />
+        </div>
+        
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember" />
+            记住我
+          </label>
+        </div>
+        
+        <button type="submit" class="login-btn">登录</button>
+      </form>
+      
+      <div class="login-footer">
+        <p>演示账号：admin / admin123</p>
+        <p><a href="/">返回网站首页</a></p>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 确保函数在全局作用域可用
+    window.handleLogin = async function(event) {
+      event.preventDefault();
+      
+      const formData = new FormData(event.target);
+      const username = formData.get('username');
+      const password = formData.get('password');
+      
+      // 显示加载状态
+      const submitBtn = event.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = '登录中...';
+      submitBtn.disabled = true;
+      
+      try {
+        const response = await fetch('/api/cms-auth.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'login',
+            username,
+            password
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // 保存token到localStorage
+          localStorage.setItem('cms_token', result.token);
+          localStorage.setItem('cms_user', JSON.stringify(result.user));
+          
+          // 跳转到CMS首页
+          window.location.href = '/cms';
+        } else {
+          alert('登录失败：' + result.error);
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      } catch (error) {
+        alert('登录出错：' + error.message);
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+  </script>
+  
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .login-header {
+      margin-bottom: 2rem;
+    }
+    
+    .login-logo {
+      height: 60px;
+      margin-bottom: 1rem;
+    }
+    
+    .login-header h1 {
+      font-size: 1.8rem;
+      color: #333;
+      margin: 0 0 0.5rem 0;
+    }
+    
+    .login-header p {
+      color: #666;
+      margin: 0;
+    }
+    
+    .login-form {
+      margin-bottom: 2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .form-group input[type="text"],
+    .form-group input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-group input[type="text"]:focus,
+    .form-group input[type="password"]:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: normal;
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    
+    .login-btn {
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .login-btn:hover {
+      background: #0056b3;
+    }
+    
+    .login-footer {
+      text-align: center;
+      color: #666;
+    }
+    
+    .login-footer p {
+      margin: 0.5rem 0;
+    }
+    
+    .login-footer a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    
+    .login-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 2rem;
+      }
+      
+      .login-logo {
+        height: 50px;
+      }
+      
+      .login-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</MainLayout>

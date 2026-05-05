@@ -1,0 +1,46 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const models = await getCollection('models');
+---
+
+<MainLayout title="模型">
+  <Breadcrumb 
+    links={[
+      { href: '/', label: '首页' },
+      { href: '#', label: '模型' }
+    ]} 
+  />
+  
+  <h2>模型</h2>
+  
+  <div class="content-grid grid-5">
+    {models.map(model => (
+      <a href={`/models/${model.slug}`} class="content-card" aria-label={`查看模型：${model.data.title}`}>
+        <div class="card-image">
+          <img 
+            src={model.data.thumbnail || "/images/noimg.gif"} 
+            alt={model.data.title} 
+ 
+            class="placeholder-image" 
+          />
+        </div>
+        <div class="card-content">
+          <span class="card-tag">模型</span>
+          <h3 class="card-title">{model.data.title}</h3>
+          <p class="card-date">{model.data.date ? new Date(model.data.date).toLocaleDateString('zh-CN') : '未知日期'}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+  
+  {models.length === 0 && (
+    <p style="text-align: center; margin-top: 2rem;">暂无模型项目</p>
+  )}
+</MainLayout>
+
+<style>
+  /* models页面特定样式可以保留 */
+</style>

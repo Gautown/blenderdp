@@ -1,32 +1,88 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
-import { getEntry } from 'astro:content';
-
-const siteConfig = await getEntry('site-config', 'site');
-
-const title = '页面未找到 - ' + (siteConfig?.data.title || 'GauTown Studio');
-const description = '抱歉，您访问的页面不存在。';
 ---
 
-<MainLayout title={title} description={description}>
+<MainLayout title="页面未找到 - BlenderDP" description="页面不存在">
   <div class="error-page">
     <div class="error-content">
-      <h1 class="error-title">404</h1>
-      <h2 class="error-subtitle">页面未找到</h2>
-      <p class="error-message">抱歉，您访问的页面不存在或已被移除。</p>
+      <h1>404</h1>
+      <h2>页面未找到</h2>
+      <p>抱歉，您访问的页面不存在。</p>
       <div class="error-actions">
-        <a href="/" class="error-button primary">返回首页</a>
-      </div>
-      <div class="error-navigation">
-        <h3>快速导航</h3>
-        <ul class="error-nav-list">
-          <li><a href="/models">模型</a></li>
-          <li><a href="/tools">工具</a></li>
-          <li><a href="/warehouse">仓库</a></li>
-          <li><a href="/notes">笔记</a></li>
-          <li><a href="/about">关于</a></li>
-        </ul>
+        <a href="/" class="btn-primary">返回首页</a>
+        <a href="/cms" class="btn-secondary">进入CMS</a>
       </div>
     </div>
   </div>
+  
+  <style>
+    .error-page {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    
+    .error-content {
+      text-align: center;
+      max-width: 500px;
+    }
+    
+    .error-content h1 {
+      font-size: 6rem;
+      margin: 0;
+      color: #667eea;
+      font-weight: 300;
+    }
+    
+    .error-content h2 {
+      font-size: 2rem;
+      margin: 0 0 1rem 0;
+      color: #333;
+    }
+    
+    .error-content p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    .btn-primary {
+      background: #667eea;
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: #5a6fd8;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+    }
+  </style>
 </MainLayout>

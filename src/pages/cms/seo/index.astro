@@ -1,0 +1,31 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="SEO优化 - Pages CMS" description="管理SEO设置">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>SEO优化</h1>
+      <p>管理网站的SEO设置和元数据</p>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-header">
+        <h2>SEO设置</h2>
+      </div>
+      <div class="list-content">
+        <p>SEO设置功能开发中...</p>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .cms-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { margin: 0 0 0.5rem 0; font-size: 2rem; color: #333; }
+    .page-header p { margin: 0 0 1rem 0; color: #666; }
+    .content-list { background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+    .list-header { padding: 1.5rem; border-bottom: 1px solid #e0e0e0; }
+    .list-content { padding: 1.5rem; }
+  </style>
+</MainLayout>

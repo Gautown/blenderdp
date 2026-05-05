@@ -1,0 +1,205 @@
+media:
+  input: public/media
+  output: /media
+
+content:
+  - name: models
+    label: 模型
+    type: collection
+    path: src/content/models
+    fields:
+      - name: title
+        label: 标题
+        type: string
+      - name: description
+        label: 描述
+        type: string
+      - name: thumbnail
+        label: 缩略图
+        type: image
+        required: false
+      - name: tags
+        label: 标签
+        type: string
+        required: false
+      - name: category
+        label: 分类
+        type: string
+        required: false
+      - name: date
+        label: 日期
+        type: date
+        required: false
+      - name: body
+        label: 内容
+        type: rich-text
+
+  - name: tools
+    label: 工具
+    type: collection
+    path: src/content/tools
+    fields:
+      - name: title
+        label: 标题
+        type: string
+      - name: description
+        label: 描述
+        type: string
+      - name: thumbnail
+        label: 缩略图
+        type: image
+        required: false
+      - name: tags
+        label: 标签
+        type: string
+        required: false
+      - name: category
+        label: 分类
+        type: string
+        required: false
+      - name: date
+        label: 日期
+        type: date
+        required: false
+      - name: body
+        label: 内容
+        type: rich-text
+
+  - name: asset-library
+    label: 资产库
+    type: collection
+    path: src/content/asset-library
+    fields:
+      - name: title
+        label: 标题
+        type: string
+      - name: description
+        label: 描述
+        type: string
+      - name: thumbnail
+        label: 缩略图
+        type: image
+        required: false
+      - name: tags
+        label: 标签
+        type: string
+        required: false
+      - name: category
+        label: 分类
+        type: string
+        required: false
+      - name: date
+        label: 日期
+        type: date
+        required: false
+      - name: body
+        label: 内容
+        type: rich-text
+
+  - name: study-materials
+    label: 学习资料
+    type: collection
+    path: src/content/study-materials
+    fields:
+      - name: title
+        label: 标题
+        type: string
+      - name: description
+        label: 描述
+        type: string
+        required: false
+      - name: thumbnail
+        label: 缩略图
+        type: image
+        required: false
+      - name: tags
+        label: 标签
+        type: string
+        required: false
+      - name: date
+        label: 日期
+        type: date
+        required: false
+      - name: body
+        label: 内容
+        type: rich-text
+
+  - name: about
+    label: 关于
+    type: collection
+    path: src/content/about
+    fields:
+      - name: title
+        label: 标题
+        type: string
+      - name: description
+        label: 描述
+        type: string
+      - name: thumbnail
+        label: 缩略图
+        type: image
+        required: false
+      - name: tags
+        label: 标签
+        type: string
+        required: false
+      - name: date
+        label: 日期
+        type: date
+        required: false
+      - name: body
+        label: 内容
+        type: rich-text
+
+  - name: site-config
+    label: 网站配置
+    type: file
+    path: src/content/site-config/site.json
+    fields:
+      - name: title
+        label: 网站标题
+        type: string
+      - name: subtitle
+        label: 副标题
+        type: string
+      - name: keywords
+        label: 关键词
+        type: string
+      - name: description
+        label: 描述
+        type: string
+      - name: logo
+        label: Logo
+        type: image
+        required: false
+      - name: siteName
+        label: 网站名称
+        type: string
+      - name: navigation
+        label: 导航
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: 名称
+            type: string
+          - name: url
+            label: 链接
+            type: string
+      - name: friendLinks
+        label: 友情链接
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: 名称
+            type: string
+          - name: url
+            label: 链接
+            type: string
+          - name: description
+            label: 描述
+            type: string
+      - name: copyright
+        label: 版权信息
+        type: string

@@ -1,0 +1,208 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import { cmsConfig } from '../../cms/config';
+---
+
+<MainLayout title="内容管理系统 - GauTown Studio" description="Pages CMS 1.0 管理后台">
+  <div class="cms-container">
+    <header class="cms-header">
+      <h1>Pages CMS 1.0</h1>
+      <p>GauTown Studio 内容管理系统</p>
+    </header>
+    
+    <div class="cms-dashboard">
+      <div class="cms-stats">
+        <div class="stat-card">
+          <h3>模型</h3>
+          <p class="stat-number" id="models-count">加载中...</p>
+          <p class="stat-label">个内容</p>
+        </div>
+        <div class="stat-card">
+          <h3>工具</h3>
+          <p class="stat-number" id="tools-count">加载中...</p>
+          <p class="stat-label">个内容</p>
+        </div>
+        <div class="stat-card">
+          <h3>学习资料</h3>
+          <p class="stat-number" id="study-materials-count">加载中...</p>
+          <p class="stat-label">个内容</p>
+        </div>
+      </div>
+      
+      <div class="cms-actions">
+        <h2>快速操作</h2>
+        <div class="action-grid">
+          <a href="/cms/models" class="action-card">
+            <div class="action-icon">📦</div>
+            <h3>管理模型</h3>
+            <p>添加、编辑和删除模型内容</p>
+          </a>
+          <a href="/cms/tools" class="action-card">
+            <div class="action-icon">🛠️</div>
+            <h3>管理工具</h3>
+            <p>管理软件和插件内容</p>
+          </a>
+          <a href="/cms/study-materials" class="action-card">
+            <div class="action-icon">📚</div>
+            <h3>学习资料</h3>
+            <p>管理教程和文档</p>
+          </a>
+          <a href="/cms/media" class="action-card">
+            <div class="action-icon">🖼️</div>
+            <h3>媒体库</h3>
+            <p>管理图片和文件</p>
+          </a>
+          <a href="/cms/seo" class="action-card">
+            <div class="action-icon">🔍</div>
+            <h3>SEO设置</h3>
+            <p>优化搜索引擎排名</p>
+          </a>
+          <a href="/cms/users" class="action-card">
+            <div class="action-icon">👥</div>
+            <h3>用户管理</h3>
+            <p>管理用户和权限</p>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 加载CMS统计数据
+    window.loadCMSStats = async function() {
+      try {
+        const response = await fetch('/api/cms-content.json');
+        
+        // 检查响应状态
+        if (!response.ok) {
+          throw new Error(`HTTP错误: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // 更新统计数字
+          document.getElementById('models-count').textContent = result.stats.models || 0;
+          document.getElementById('tools-count').textContent = result.stats.tools || 0;
+          document.getElementById('study-materials-count').textContent = result.stats['study-materials'] || 0;
+        } else {
+          console.error('加载统计数据失败:', result.error);
+          // 设置默认值
+          document.getElementById('models-count').textContent = '0';
+          document.getElementById('tools-count').textContent = '0';
+          document.getElementById('study-materials-count').textContent = '0';
+        }
+      } catch (error) {
+        console.error('加载统计数据出错:', error);
+        // 设置默认值
+        document.getElementById('models-count').textContent = '0';
+        document.getElementById('tools-count').textContent = '0';
+        document.getElementById('study-materials-count').textContent = '0';
+      }
+    }
+    
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', window.loadCMSStats);
+  </script>
+  
+  <style>
+    .cms-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .cms-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .cms-header h1 {
+      font-size: 2.5rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .cms-header p {
+      font-size: 1.2rem;
+      color: #666;
+    }
+    
+    .cms-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid #e9ecef;
+    }
+    
+    .stat-card h3 {
+      margin: 0 0 1rem 0;
+      color: #495057;
+      font-size: 1rem;
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #007bff;
+      margin: 0;
+    }
+    
+    .stat-label {
+      margin: 0.5rem 0 0 0;
+      color: #6c757d;
+    }
+    
+    .cms-actions h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .action-card {
+      display: block;
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+    }
+    
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-color: #007bff;
+    }
+    
+    .action-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .action-card h3 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+    }
+    
+    .action-card p {
+      margin: 0;
+      color: #666;
+      font-size: 0.9rem;
+    }
+  </style>
+</MainLayout>

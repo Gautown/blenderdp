@@ -13,14 +13,12 @@ export async function getStaticPaths() {
 
 const { assetLibrary } = Astro.props;
 
-// 检查条目是否存在
 if (!assetLibrary) {
   throw new Error(`Asset library entry not found`);
 }
 
 const { Content } = await render(assetLibrary);
 
-// 获取所有学习资料并按日期排序，获取最新的3篇
 const allStudyMaterials = await getCollection('study-materials');
 const sortedStudyMaterials = allStudyMaterials.sort((a, b) => {
   const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
@@ -29,31 +27,24 @@ const sortedStudyMaterials = allStudyMaterials.sort((a, b) => {
 });
 const latestStudyMaterials = sortedStudyMaterials.slice(0, 3);
 
-// 获取随机推荐内容（示例数据）
 const randomRecommendations = [
   { title: "推荐作品1", url: "/portfolio", type: "作品" },
   { title: "推荐工具1", url: "/tools", type: "工具" },
   { title: "推荐学习资料1", url: "/study-materials", type: "学习资料" },
 ];
 
-// 获取最新文章（学习资料合集）
 const latestArticles = latestStudyMaterials.map(studyMaterial => ({
   title: studyMaterial.data.title,
   url: `/study-materials/${studyMaterial.id}`,
   date: studyMaterial.data.date ? new Date(studyMaterial.data.date).toLocaleDateString('zh-CN') : '未知日期'
 }));
 
-// 获取热门标签（从实际内容中提取）
-// 收集所有内容的标签
 const allModels = await getCollection('models');
 const allTools = await getCollection('tools');
-// 修复：移除重复声明的allNotes变量
 const allAssetLibraries = await getCollection('asset-library');
 
-// 提取所有标签并统计频率
 const tagCounts = new Map();
 
-// 处理模型标签
 allModels.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
@@ -62,7 +53,6 @@ allModels.forEach(item => {
   }
 });
 
-// 处理工具标签
 allTools.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
@@ -71,7 +61,6 @@ allTools.forEach(item => {
   }
 });
 
-// 处理学习资料标签
 allStudyMaterials.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
@@ -80,7 +69,6 @@ allStudyMaterials.forEach(item => {
   }
 });
 
-// 处理资产库标签
 allAssetLibraries.forEach(item => {
   if (item.data.tags && Array.isArray(item.data.tags)) {
     item.data.tags.forEach((tag: string) => {
@@ -89,7 +77,6 @@ allAssetLibraries.forEach(item => {
   }
 });
 
-// 转换为数组并按频率排序，取前10个
 const popularTags = Array.from(tagCounts.entries())
   .map(([name, count]) => ({ name, count, url: `/tags/${encodeURIComponent(name)}` }))
   .sort((a, b) => b.count - a.count)
@@ -115,7 +102,6 @@ const popularTags = Array.from(tagCounts.entries())
       <p>{assetLibrary.data.date ? new Date(assetLibrary.data.date).toLocaleDateString('zh-CN') : ''}</p>
     </div>
     
-    {/* 显示标签 */}
     {assetLibrary.data.tags && Array.isArray(assetLibrary.data.tags) && assetLibrary.data.tags.length > 0 && (
       <div class="model-tags">
         <h3>标签：</h3>
@@ -132,7 +118,6 @@ const popularTags = Array.from(tagCounts.entries())
         src={assetLibrary.data.thumbnail} 
         alt={assetLibrary.data.title} 
         class="model-image"
-
       />
     )}
     
@@ -143,5 +128,3 @@ const popularTags = Array.from(tagCounts.entries())
   
   <Comments />
 </ContentLayout>
-
-<!-- 所有样式已移至global.css -->

@@ -15,14 +15,12 @@
 - ✅ **RSS 订阅支持** - 便于用户订阅更新
 - ✅ **Markdown & MDX 支持** - 灵活的内容创作方式
 - ✅ **评论系统集成** - 使用 Giscus 实现基于 GitHub Discussions 的评论功能
-- ✅ **内容管理系统** - 集成 Decap CMS (原 Netlify CMS) 便于内容管理
 
 ## 🚀 项目结构
 
 ```
 .
 ├── public/                 # 静态资源文件
-│   ├── admin/             # CMS 配置文件
 │   ├── fonts/             # 字体文件
 │   └── styles/            # 全局样式文件
 ├── src/
@@ -43,7 +41,6 @@
 
 - **框架**: [Astro](https://astro.build/)
 - **部署**: [Cloudflare Workers](https://workers.cloudflare.com/)
-- **内容管理**: [Decap CMS](https://decapcms.org/)
 - **评论系统**: [Giscus](https://giscus.app/)
 - **类型检查**: [TypeScript](https://www.typescriptlang.org/)
 - **样式**: 原生 CSS + Bootstrap Icons
@@ -63,14 +60,6 @@ npm run dev
 ```
 
 启动本地开发服务器，通常在 `http://localhost:4321` 访问。
-
-### 内容管理
-
-```bash
-npm run cms
-```
-
-启动 Decap CMS 本地代理服务器，通常在 `http://localhost:8081/admin/` 访问。
 
 ### 构建生产版本
 
@@ -108,18 +97,6 @@ npm run deploy
 
 每种内容类型都有对应的 Markdown 文件，位于 `src/content/` 相应目录下。
 
-## 🛠️ CMS 配置
-
-项目集成了 Decap CMS，可通过 `/admin` 路径访问内容管理系统：  
-浏览器地址栏输入：
-~~~
-- 生产环境: https://Your domain name/admin
-- 本地开发: http://localhost:8081/admin
-~~~
-CMS 配置文件位于 `public/admin/` 目录：
-- `config.yml` - 生产环境配置
-- `config.local.yml` - 本地开发配置
-
 ## 💬 评论系统
 
 项目使用 Giscus 作为评论系统，基于 GitHub Discussions 实现：
@@ -149,4 +126,3 @@ CMS 配置文件位于 `public/admin/` 目录：
 - [Astro](https://astro.build/) - 下一代网站构建工具
 - [Cloudflare](https://www.cloudflare.com/) - 全球 CDN 和安全服务
 - [Giscus](https://giscus.app/) - 基于 GitHub Discussions 的评论系统
-- [Decap CMS](https://decapcms.org/) - 开源内容管理系统

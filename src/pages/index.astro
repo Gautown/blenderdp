@@ -9,7 +9,6 @@ const assetLibraries = await getCollection('asset-library');
 const abouts = await getCollection('about');
 const siteConfig = await getEntry('site-config', 'site');
 
-// 格式化日期的辅助函数
 function formatDate(date: Date | string | undefined) {
   if (!date) return '未知日期';
   return new Date(date).toLocaleDateString('zh-CN', {
@@ -19,7 +18,6 @@ function formatDate(date: Date | string | undefined) {
   });
 }
 
-// 获取标签的辅助函数（根据集合类型）
 function getTags(collectionType: string) {
   const tags: Record<string, string> = {
     'asset-library': '资产库',
@@ -116,7 +114,7 @@ function getTags(collectionType: string) {
           <div class="card-content">
             <span class="card-tag">{getTags('study-materials')}</span>
             <h3 class="card-title">{studyMaterial.data.title}</h3>
-            <p class="card-date">未知日期</p>
+            <p class="card-date">{studyMaterial.data.date ? formatDate(studyMaterial.data.date) : '未知日期'}</p>
           </div>
         </a>
       ))}
@@ -145,6 +143,5 @@ function getTags(collectionType: string) {
         </div>
       </div>
     )}
-
   </div>
 </MainLayout>

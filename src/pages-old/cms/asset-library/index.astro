@@ -1,0 +1,460 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+import MarkdownToolbar from '../../../components/cms/MarkdownToolbar.astro';
+---
+
+<MainLayout title="资产库管理 - Pages CMS" description="管理资产库内容">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>资产库管理</h1>
+      <p>管理资产和资源内容</p>
+      <button class="btn-primary" onclick="openEditor()">添加新资产</button>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-header">
+        <h2>资产列表</h2>
+        <div class="search-box">
+          <input type="text" placeholder="搜索资产..." />
+          <button>搜索</button>
+        </div>
+      </div>
+      
+      <div class="list-content">
+        <div class="empty-state">
+          <div class="empty-icon">📦</div>
+          <h3>暂无资产内容</h3>
+          <p>点击"添加新资产"按钮开始创建内容</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 资产编辑器模态框 -->
+    <div id="asset-editor" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="editor-title">添加新资产</h3>
+          <button class="close-btn" onclick="closeAssetEditor()">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="asset-form">
+            <div class="form-group">
+              <label for="asset-title">标题</label>
+              <input type="text" id="asset-title" required />
+            </div>
+            <div class="form-group">
+              <label for="asset-description">描述</label>
+              <textarea id="asset-description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="asset-tags">标签</label>
+              <input type="text" id="asset-tags" placeholder="用逗号分隔" />
+            </div>
+            <div class="form-group">
+              <label for="asset-content">正文内容</label>
+              
+              <!-- 使用Markdown工具栏组件 -->
+              <MarkdownToolbar targetId="asset-content" />
+              
+              <textarea id="asset-content" rows="10" placeholder="输入Markdown格式的正文内容..."></textarea>
+              <small>支持Markdown语法，可以插入图片、链接等</small>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="closeAssetEditor()">取消</button>
+              <button type="submit" class="btn-primary">保存</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Marked.js for Markdown preview -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <script>
+    // 确保所有函数在全局作用域可用
+    window.currentAssets = [];
+    window.editingAssetId = null;
+    
+    // 打开资产编辑器
+    window.openEditor = function(assetId = null) {
+      window.editingAssetId = assetId;
+      const modal = document.getElementById('asset-editor');
+      const title = document.getElementById('editor-title');
+      const form = document.getElementById('asset-form');
+      
+      if (assetId) {
+        title.textContent = '编辑资产';
+        const asset = window.currentAssets.find(a => a.id === assetId);
+        if (asset) {
+          document.getElementById('asset-title').value = asset.title;
+          document.getElementById('asset-description').value = asset.description;
+          document.getElementById('asset-tags').value = asset.tags ? asset.tags.join(', ') : '';
+          document.getElementById('asset-content').value = asset.body || '';
+        }
+      } else {
+        title.textContent = '添加新资产';
+        form.reset();
+      }
+      
+      modal.style.display = 'block';
+    }
+    
+    // 关闭资产编辑器
+    window.closeAssetEditor = function() {
+      document.getElementById('asset-editor').style.display = 'none';
+      window.editingAssetId = null;
+    }
+    
+    // 保存资产
+    window.saveAsset = async function(event) {
+      event.preventDefault();
+      
+      const formData = {
+        title: document.getElementById('asset-title').value,
+        description: document.getElementById('asset-description').value,
+        tags: document.getElementById('asset-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+        content: document.getElementById('asset-content').value
+      };
+      
+      try {
+        const method = window.editingAssetId ? 'PUT' : 'POST';
+        const response = await fetch('/api/cms-content.json', {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection: 'assets',
+            id: window.editingAssetId,
+            data: formData
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          window.closeAssetEditor();
+          window.loadAssets();
+          window.showSuccess(window.editingAssetId ? '资产更新成功' : '资产创建成功');
+        } else {
+          window.showError('保存失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('保存出错: ' + error.message);
+      }
+    }
+    
+    // 加载资产列表
+    window.loadAssets = async function() {
+      try {
+        const response = await fetch('/api/cms-content.json?collection=assets');
+        const result = await response.json();
+        
+        if (result.success) {
+          window.currentAssets = result.data || [];
+          window.renderAssets(window.currentAssets);
+        } else {
+          window.showError('加载资产失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('加载资产出错: ' + error.message);
+      }
+    }
+    
+    // 渲染资产列表
+    window.renderAssets = function(assets) {
+      const listElement = document.querySelector('.list-content');
+      
+      if (assets.length === 0) {
+        listElement.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h3>暂无资产内容</h3>
+            <p>点击"添加新资产"按钮开始创建内容</p>
+          </div>
+        `;
+        return;
+      }
+      
+      listElement.innerHTML = `
+        <table class="content-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>描述</th>
+              <th>标签</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${assets.map(asset => `
+              <tr>
+                <td>${asset.title}</td>
+                <td>${asset.description}</td>
+                <td>${asset.tags ? asset.tags.join(', ') : ''}</td>
+                <td>
+                  <button class="btn-edit" onclick="window.editAsset('${asset.id}')">编辑</button>
+                  <button class="btn-delete" onclick="window.deleteAsset('${asset.id}')">删除</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    // 编辑资产
+    window.editAsset = function(id) {
+      window.openEditor(id);
+    }
+    
+    // 删除资产
+    window.deleteAsset = async function(id) {
+      if (!confirm('确定要删除这个资产吗？此操作不可恢复。')) return;
+      
+      try {
+        const response = await fetch(`/api/cms-content.json?collection=assets&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          window.loadAssets();
+          window.showSuccess('资产删除成功');
+        } else {
+          window.showError('删除失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('删除出错: ' + error.message);
+      }
+    }
+    
+    // 显示成功消息
+    window.showSuccess = function(message) {
+      alert('✅ ' + message);
+    }
+    
+    // 显示错误消息
+    window.showError = function(message) {
+      alert('❌ ' + message);
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      window.loadAssets();
+      document.getElementById('asset-form').addEventListener('submit', window.saveAsset);
+    });
+  </script>
+  
+  <style>
+    .cms-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+    
+    .content-list {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+    
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .list-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #333;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .search-box input {
+      padding: 0.5rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    
+    .search-box button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    
+    .list-content {
+      padding: 2rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+      margin: 0 0 0.5rem 0;
+    }
+    
+    /* 模态框样式 */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 0;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6c757d;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-edit {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .content-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .content-table th,
+    .content-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .content-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+  </style>
+</MainLayout>

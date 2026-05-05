@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 // 标签解析函数：将逗号分隔的字符串转换为标签数组
 function parseTags(tagsString: string | undefined): string[] {
@@ -7,7 +8,7 @@ function parseTags(tagsString: string | undefined): string[] {
 }
 
 const studyMaterials = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/study-materials' }),
   schema: z.object({
     title: z.string(),
     tags: z.string().optional().transform(parseTags),
@@ -18,7 +19,7 @@ const studyMaterials = defineCollection({
 });
 
 const models = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/models' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -30,7 +31,7 @@ const models = defineCollection({
 });
 
 const tools = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/tools' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -42,7 +43,7 @@ const tools = defineCollection({
 });
 
 const assetLibrary = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/asset-library' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -54,7 +55,7 @@ const assetLibrary = defineCollection({
 });
 
 const about = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/about' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -65,7 +66,7 @@ const about = defineCollection({
 });
 
 const siteConfig = defineCollection({
-  type: 'data',
+  loader: glob({ pattern: '**/*.json', base: './src/content/site-config' }),
   schema: z.object({
     title: z.string(),
     subtitle: z.string(),
@@ -91,7 +92,6 @@ const siteConfig = defineCollection({
 });
 
 export const collections = {
-  // 注意：这里使用连字符命名以匹配实际文件夹名称
   'study-materials': studyMaterials,
   models: models,
   tools: tools,

@@ -1,0 +1,8 @@
+// node_modules/@cloudflare/vite-plugin/node_modules/unenv/dist/runtime/mock/noop.mjs
+var noop_default = Object.assign(() => {
+}, { __unenv__: true });
+
+export {
+  noop_default
+};
+//# sourceMappingURL=chunk-NODYGJSR.js.map

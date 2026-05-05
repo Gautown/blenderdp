@@ -1,0 +1,33 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="媒体库 - Pages CMS" description="管理媒体文件">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>媒体库</h1>
+      <p>上传和管理图片、视频等媒体文件</p>
+      <button class="btn-primary" onclick="alert('功能开发中')">上传媒体</button>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-header">
+        <h2>媒体文件</h2>
+      </div>
+      <div class="list-content">
+        <p>暂无媒体文件</p>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+    .cms-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { margin: 0 0 0.5rem 0; font-size: 2rem; color: #333; }
+    .page-header p { margin: 0 0 1rem 0; color: #666; }
+    .btn-primary { background: #007acc; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    .content-list { background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+    .list-header { padding: 1.5rem; border-bottom: 1px solid #e0e0e0; }
+    .list-content { padding: 1.5rem; }
+  </style>
+</MainLayout>

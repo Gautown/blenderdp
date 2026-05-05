@@ -1,0 +1,127 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="用户管理 - Pages CMS" description="管理系统用户">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>用户管理</h1>
+      <p>添加、编辑和删除系统用户</p>
+      <button class="btn-primary" onclick="openUserEditor()">添加新用户</button>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-header">
+        <h2>用户列表</h2>
+      </div>
+      <div class="list-content" id="users-list">
+        <p>加载中...</p>
+      </div>
+    </div>
+  </div>
+  
+  <div id="user-editor" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="editor-title">添加新用户</h3>
+        <button class="close-btn" onclick="closeUserEditor()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="user-form" onsubmit="saveUser(event)">
+          <div class="form-group">
+            <label for="user-username">用户名</label>
+            <input type="text" id="user-username" required />
+          </div>
+          <div class="form-group">
+            <label for="user-name">姓名</label>
+            <input type="text" id="user-name" required />
+          </div>
+          <div class="form-group">
+            <label for="user-email">邮箱</label>
+            <input type="email" id="user-email" required />
+          </div>
+          <div class="form-group">
+            <label for="user-role">角色</label>
+            <select id="user-role">
+              <option value="user">普通用户</option>
+              <option value="admin">管理员</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="user-password">密码</label>
+            <input type="password" id="user-password" required />
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="closeUserEditor()">取消</button>
+            <button type="submit" class="btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function openUserEditor() {
+      document.getElementById('user-editor').style.display = 'block';
+    }
+    
+    function closeUserEditor() {
+      document.getElementById('user-editor').style.display = 'none';
+      document.getElementById('user-form').reset();
+    }
+    
+    async function saveUser(event) {
+      event.preventDefault();
+      
+      const formData = {
+        username: document.getElementById('user-username').value,
+        name: document.getElementById('user-name').value,
+        email: document.getElementById('user-email').value,
+        role: document.getElementById('user-role').value,
+        password: document.getElementById('user-password').value
+      };
+      
+      try {
+        const response = await fetch('/api/cms-users.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          alert('用户创建成功！');
+          closeUserEditor();
+        } else {
+          alert('创建失败：' + result.error);
+        }
+      } catch (error) {
+        alert('请求失败：' + error.message);
+      }
+    }
+  </script>
+  
+  <style>
+    .cms-page { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .page-header { margin-bottom: 2rem; }
+    .page-header h1 { margin: 0 0 0.5rem 0; font-size: 2rem; color: #333; }
+    .page-header p { margin: 0 0 1rem 0; color: #666; }
+    .btn-primary { background: #007acc; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    .btn-secondary { background: #6c757d; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+    .content-list { background: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+    .list-header { padding: 1.5rem; border-bottom: 1px solid #e0e0e0; }
+    .list-content { padding: 1.5rem; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-content { background: white; border-radius: 8px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+    .modal-header { padding: 1.5rem; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center; }
+    .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+    .modal-body { padding: 1.5rem; }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #333; }
+    .form-group input, .form-group select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+    .form-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+  </style>
+</MainLayout>

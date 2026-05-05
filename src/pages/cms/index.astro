@@ -1,0 +1,95 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import { getCollection } from 'astro:content';
+
+const models = await getCollection('models');
+const tools = await getCollection('tools');
+const assetLibraries = await getCollection('asset-library');
+const studyMaterials = await getCollection('study-materials');
+---
+
+<MainLayout title="Pages CMS - 内容管理系统" description="Pages CMS 内容管理系统">
+  <div class="cms-dashboard">
+    <header class="dashboard-header">
+      <h1>Pages CMS 内容管理系统</h1>
+      <p>基于 GitHub 的无头 CMS，直接编辑仓库文件</p>
+    </header>
+    
+    <div class="cms-info">
+      <div class="info-card">
+        <h3>Pages CMS 配置</h3>
+        <p>本项目已配置 <code>.pages.yml</code> 文件，支持 Pages CMS 管理内容。</p>
+        <a href="https://app.pagescms.org/" target="_blank" class="btn-primary">访问 Pages CMS</a>
+      </div>
+    </div>
+    
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-number">{models.length}</div>
+        <div class="stat-label">模型</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{tools.length}</div>
+        <div class="stat-label">工具</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{assetLibraries.length}</div>
+        <div class="stat-label">资产库</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{studyMaterials.length}</div>
+        <div class="stat-label">学习资料</div>
+      </div>
+    </div>
+    
+    <div class="dashboard-grid">
+      <a href="/cms/models" class="dashboard-card">
+        <div class="card-icon">📊</div>
+        <h3>模型</h3>
+        <p>查看模型内容（{models.length} 个）</p>
+      </a>
+      
+      <a href="/cms/tools" class="dashboard-card">
+        <div class="card-icon">🛠️</div>
+        <h3>工具</h3>
+        <p>查看工具内容（{tools.length} 个）</p>
+      </a>
+      
+      <a href="/cms/asset-library" class="dashboard-card">
+        <div class="card-icon">📦</div>
+        <h3>资产库</h3>
+        <p>查看资产内容（{assetLibraries.length} 个）</p>
+      </a>
+      
+      <a href="/cms/study-materials" class="dashboard-card">
+        <div class="card-icon">📚</div>
+        <h3>学习资料</h3>
+        <p>查看学习资料（{studyMaterials.length} 个）</p>
+      </a>
+    </div>
+  </div>
+  
+  <style>
+    .cms-dashboard { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+    .dashboard-header { text-align: center; margin-bottom: 2rem; }
+    .dashboard-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; color: #333; }
+    .dashboard-header p { font-size: 1.1rem; color: #666; }
+    .cms-info { margin-bottom: 2rem; }
+    .info-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 2rem; text-align: center; }
+    .info-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .info-card p { margin-bottom: 1rem; opacity: 0.9; }
+    .info-card code { background: rgba(255,255,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
+    .btn-primary { display: inline-block; background: white; color: #667eea; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: transform 0.3s ease; }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; text-align: center; }
+    .stat-number { font-size: 2rem; font-weight: 700; color: #007acc; }
+    .stat-label { font-size: 0.875rem; color: #666; margin-top: 0.25rem; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+    .dashboard-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; text-decoration: none; color: inherit; transition: all 0.3s ease; text-align: center; }
+    .dashboard-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #007acc; }
+    .card-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .dashboard-card h3 { margin: 0 0 0.5rem 0; font-size: 1.3rem; color: #333; }
+    .dashboard-card p { margin: 0; color: #666; font-size: 0.9rem; }
+  </style>
+</MainLayout>

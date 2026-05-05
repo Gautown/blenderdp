@@ -1,0 +1,460 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+import MarkdownToolbar from '../../../components/cms/MarkdownToolbar.astro';
+---
+
+<MainLayout title="工具管理 - Pages CMS" description="管理工具和插件内容">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>工具管理</h1>
+      <p>管理软件和插件内容</p>
+      <button class="btn-primary" onclick="openEditor()">添加新工具</button>
+    </header>
+    
+    <div class="content-list">
+      <div class="list-header">
+        <h2>工具列表</h2>
+        <div class="search-box">
+          <input type="text" placeholder="搜索工具..." />
+          <button>搜索</button>
+        </div>
+      </div>
+      
+      <div class="list-content">
+        <div class="empty-state">
+          <div class="empty-icon">🛠️</div>
+          <h3>暂无工具内容</h3>
+          <p>点击"添加新工具"按钮开始创建内容</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 工具编辑器模态框 -->
+    <div id="tool-editor" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="editor-title">添加新工具</h3>
+          <button class="close-btn" onclick="closeToolEditor()">×</button>
+        </div>
+        <div class="modal-body">
+          <form id="tool-form">
+            <div class="form-group">
+              <label for="tool-title">标题</label>
+              <input type="text" id="tool-title" required />
+            </div>
+            <div class="form-group">
+              <label for="tool-description">描述</label>
+              <textarea id="tool-description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="tool-tags">标签</label>
+              <input type="text" id="tool-tags" placeholder="用逗号分隔" />
+            </div>
+            <div class="form-group">
+              <label for="tool-content">正文内容</label>
+              
+              <!-- 使用Markdown工具栏组件 -->
+              <MarkdownToolbar targetId="tool-content" />
+              
+              <textarea id="tool-content" rows="10" placeholder="输入Markdown格式的正文内容..."></textarea>
+              <small>支持Markdown语法，可以插入图片、链接等</small>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" onclick="closeToolEditor()">取消</button>
+              <button type="submit" class="btn-primary">保存</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Marked.js for Markdown preview -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <script>
+    // 确保所有函数在全局作用域可用
+    window.currentTools = [];
+    window.editingToolId = null;
+    
+    // 打开工具编辑器
+    window.openEditor = function(toolId = null) {
+      window.editingToolId = toolId;
+      const modal = document.getElementById('tool-editor');
+      const title = document.getElementById('editor-title');
+      const form = document.getElementById('tool-form');
+      
+      if (toolId) {
+        title.textContent = '编辑工具';
+        const tool = window.currentTools.find(t => t.id === toolId);
+        if (tool) {
+          document.getElementById('tool-title').value = tool.title;
+          document.getElementById('tool-description').value = tool.description;
+          document.getElementById('tool-tags').value = tool.tags ? tool.tags.join(', ') : '';
+          document.getElementById('tool-content').value = tool.body || '';
+        }
+      } else {
+        title.textContent = '添加新工具';
+        form.reset();
+      }
+      
+      modal.style.display = 'block';
+    }
+    
+    // 关闭工具编辑器
+    window.closeToolEditor = function() {
+      document.getElementById('tool-editor').style.display = 'none';
+      window.editingToolId = null;
+    }
+    
+    // 保存工具
+    window.saveTool = async function(event) {
+      event.preventDefault();
+      
+      const formData = {
+        title: document.getElementById('tool-title').value,
+        description: document.getElementById('tool-description').value,
+        tags: document.getElementById('tool-tags').value.split(',').map(tag => tag.trim()).filter(tag => tag),
+        content: document.getElementById('tool-content').value
+      };
+      
+      try {
+        const method = window.editingToolId ? 'PUT' : 'POST';
+        const response = await fetch('/api/cms-content.json', {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            collection: 'tools',
+            id: window.editingToolId,
+            data: formData
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          window.closeToolEditor();
+          window.loadTools();
+          window.showSuccess(window.editingToolId ? '工具更新成功' : '工具创建成功');
+        } else {
+          window.showError('保存失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('保存出错: ' + error.message);
+      }
+    }
+    
+    // 加载工具列表
+    window.loadTools = async function() {
+      try {
+        const response = await fetch('/api/cms-content.json?collection=tools');
+        const result = await response.json();
+        
+        if (result.success) {
+          window.currentTools = result.data || [];
+          window.renderTools(window.currentTools);
+        } else {
+          window.showError('加载工具失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('加载工具出错: ' + error.message);
+      }
+    }
+    
+    // 渲染工具列表
+    window.renderTools = function(tools) {
+      const listElement = document.querySelector('.list-content');
+      
+      if (tools.length === 0) {
+        listElement.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🛠️</div>
+            <h3>暂无工具内容</h3>
+            <p>点击"添加新工具"按钮开始创建内容</p>
+          </div>
+        `;
+        return;
+      }
+      
+      listElement.innerHTML = `
+        <table class="content-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>描述</th>
+              <th>标签</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tools.map(tool => `
+              <tr>
+                <td>${tool.title}</td>
+                <td>${tool.description}</td>
+                <td>${tool.tags ? tool.tags.join(', ') : ''}</td>
+                <td>
+                  <button class="btn-edit" onclick="window.editTool('${tool.id}')">编辑</button>
+                  <button class="btn-delete" onclick="window.deleteTool('${tool.id}')">删除</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    // 编辑工具
+    window.editTool = function(id) {
+      window.openEditor(id);
+    }
+    
+    // 删除工具
+    window.deleteTool = async function(id) {
+      if (!confirm('确定要删除这个工具吗？此操作不可恢复。')) return;
+      
+      try {
+        const response = await fetch(`/api/cms-content.json?collection=tools&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          window.loadTools();
+          window.showSuccess('工具删除成功');
+        } else {
+          window.showError('删除失败: ' + result.error);
+        }
+      } catch (error) {
+        window.showError('删除出错: ' + error.message);
+      }
+    }
+    
+    // 显示成功消息
+    window.showSuccess = function(message) {
+      alert('✅ ' + message);
+    }
+    
+    // 显示错误消息
+    window.showError = function(message) {
+      alert('❌ ' + message);
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      window.loadTools();
+      document.getElementById('tool-form').addEventListener('submit', window.saveTool);
+    });
+  </script>
+  
+  <style>
+    .cms-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+    
+    .content-list {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+    
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .list-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: #333;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .search-box input {
+      padding: 0.5rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    
+    .search-box button {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    
+    .list-content {
+      padding: 2rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      color: #6c757d;
+    }
+    
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-state h3 {
+      margin: 0 0 0.5rem 0;
+    }
+    
+    /* 模态框样式 */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 0;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6c757d;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-edit {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .content-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .content-table th,
+    .content-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .content-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+  </style>
+</MainLayout>

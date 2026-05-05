@@ -1,0 +1,150 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+const studyMaterials = await getCollection('study-materials');
+const models = await getCollection('models');
+const tools = await getCollection('tools');
+const assetLibraries = await getCollection('asset-library');
+const abouts = await getCollection('about');
+const siteConfig = await getEntry('site-config', 'site');
+
+// 格式化日期的辅助函数
+function formatDate(date: Date | string | undefined) {
+  if (!date) return '未知日期';
+  return new Date(date).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+// 获取标签的辅助函数（根据集合类型）
+function getTags(collectionType: string) {
+  const tags: Record<string, string> = {
+    'asset-library': '资产库',
+    'models': '模型',
+    'tools': '工具',
+    'study-materials': '学习资料',
+    'about': '关于'
+  };
+  return tags[collectionType] || '内容';
+}
+---
+
+<MainLayout title={siteConfig?.data.title} description={siteConfig?.data.description}>
+  <div id="top"></div>
+  <div slot="hero" class="hero" style="background-image: url('/images/haikei.svg')">
+    <h1>{siteConfig?.data.title}</h1>
+    <p>{siteConfig?.data.subtitle}</p>
+  </div>
+  <div class="section">
+    <h2 class="section-title">模型</h2>
+    <div class="content-grid grid-5">
+      {models.map(model => (
+        <a href={`/models/${model.slug}`} class="content-card" aria-label={`查看模型：${model.data.title}`}>
+          <div class="card-image">
+            {model.data.thumbnail ? (
+              <img src={model.data.thumbnail} alt={model.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('models')}</span>
+            <h3 class="card-title">{model.data.title}</h3>
+            <p class="card-date">{formatDate(model.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/models" class="view-all">查看所有模型</a>
+  </div>
+  <div class="section">
+    <h2 class="section-title">资产库</h2>
+    <div class="content-grid grid-5">
+      {assetLibraries.map(assetLibrary => (
+        <a href={`/asset-library/${assetLibrary.id}`} class="content-card" aria-label={`查看资产库：${assetLibrary.data.title}`}>
+          <div class="card-image">
+            {assetLibrary.data.thumbnail ? (
+              <img src={assetLibrary.data.thumbnail} alt={assetLibrary.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('asset-library')}</span>
+            <h3 class="card-title">{assetLibrary.data.title}</h3>
+            <p class="card-date">{formatDate(assetLibrary.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/asset-library" class="view-all">查看所有资产库</a>
+  </div>  
+  <div class="section">
+    <h2 class="section-title">工具集</h2>
+    <div class="content-grid grid-5">
+      {tools.map(tool => (
+        <a href={`/tools/${tool.slug}`} class="content-card" aria-label={`查看工具：${tool.data.title}`}>
+          <div class="card-image">
+            {tool.data.thumbnail ? (
+              <img src={tool.data.thumbnail} alt={tool.data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('tools')}</span>
+            <h3 class="card-title">{tool.data.title}</h3>
+            <p class="card-date">{formatDate(tool.data.date)}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/tools" class="view-all">查看所有工具</a>
+  </div>
+  
+  <div class="section">
+    <h2 class="section-title">学习资料</h2>
+    <div class="content-grid grid-5">
+      {studyMaterials.map(studyMaterial => (
+        <a href={`/study-materials/${studyMaterial.id}`} class="content-card" aria-label={`查看学习资料：${studyMaterial.data.title}`}>
+          <div class="card-image">
+            <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+          </div>
+          <div class="card-content">
+            <span class="card-tag">{getTags('study-materials')}</span>
+            <h3 class="card-title">{studyMaterial.data.title}</h3>
+            <p class="card-date">未知日期</p>
+          </div>
+        </a>
+      ))}
+    </div>
+    <a href="/study-materials" class="view-all">查看所有学习资料</a>
+  </div>
+  
+  <div class="section">
+    {abouts.length > 0 && (
+      <div class="about-content">
+        <div class="about-wrapper">
+          <div class="about-image">
+            {abouts[0].data.thumbnail ? (
+              <img src={abouts[0].data.thumbnail} alt={abouts[0].data.title} />
+            ) : (
+              <img src="/images/noimg.gif" alt="暂无图片" class="placeholder-image" />
+            )}
+          </div>
+          <div class="about-text">
+            <h3>{abouts[0].data.title}</h3>
+            <div class="about-description">
+              {abouts[0].data.description}
+            </div>
+            <a href="/about" class="about-link">了解更多 →</a>
+          </div>
+        </div>
+      </div>
+    )}
+
+  </div>
+</MainLayout>

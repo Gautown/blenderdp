@@ -1,0 +1,539 @@
+---
+import MainLayout from '../../../layouts/MainLayout.astro';
+---
+
+<MainLayout title="用户管理 - Pages CMS" description="管理用户和权限">
+  <div class="cms-page">
+    <header class="page-header">
+      <h1>用户管理</h1>
+      <p>管理系统用户和权限设置</p>
+      <button class="btn-primary" onclick="openUserForm()">添加用户</button>
+    </header>
+    
+    <div class="user-management">
+      <div class="user-stats">
+        <div class="stat-card">
+          <h3>总用户数</h3>
+          <p class="stat-number" id="total-users">加载中...</p>
+        </div>
+        <div class="stat-card">
+          <h3>管理员</h3>
+          <p class="stat-number" id="admin-count">加载中...</p>
+        </div>
+        <div class="stat-card">
+          <h3>编辑者</h3>
+          <p class="stat-number" id="editor-count">加载中...</p>
+        </div>
+        <div class="stat-card">
+          <h3>查看者</h3>
+          <p class="stat-number" id="viewer-count">加载中...</p>
+        </div>
+      </div>
+      
+      <div class="management-header">
+        <h2>用户列表</h2>
+        <div class="management-controls">
+          <select id="role-filter" onchange="loadUsers()">
+            <option value="all">所有角色</option>
+            <option value="admin">管理员</option>
+            <option value="editor">编辑者</option>
+            <option value="viewer">查看者</option>
+          </select>
+          <input type="text" id="user-search" placeholder="搜索用户..." onkeyup="searchUsers()" />
+        </div>
+      </div>
+      
+      <div class="user-list" id="user-list">
+        <div class="loading-state">
+          <div class="loading-icon">⏳</div>
+          <h3>加载中...</h3>
+          <p>正在获取用户数据</p>
+        </div>
+      </div>
+      
+      <div class="permission-settings">
+        <h2>权限设置</h2>
+        <div class="permission-grid" id="permission-grid">
+          <div class="loading-state">
+            <div class="loading-icon">⏳</div>
+            <h3>加载权限设置...</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 用户编辑模态框 -->
+  <div id="user-editor" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="user-editor-title">添加用户</h3>
+        <button class="close-btn" onclick="window.closeUserForm()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="user-form">
+          <div class="form-group">
+            <label for="user-username">用户名 *</label>
+            <input type="text" id="user-username" required />
+          </div>
+          <div class="form-group">
+            <label for="user-email">邮箱 *</label>
+            <input type="email" id="user-email" required />
+          </div>
+          <div class="form-group">
+            <label for="user-name">姓名 *</label>
+            <input type="text" id="user-name" required />
+          </div>
+          <div class="form-group">
+            <label for="user-role">角色 *</label>
+            <select id="user-role" required>
+              <option value="">选择角色</option>
+              <option value="admin">管理员</option>
+              <option value="editor">编辑者</option>
+              <option value="viewer">查看者</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="user-status">状态</label>
+            <select id="user-status">
+              <option value="active">活跃</option>
+              <option value="inactive">禁用</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="window.closeUserForm()">取消</button>
+            <button type="submit" class="btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // 确保所有函数在全局作用域可用
+    window.currentUsers = [];
+    window.currentRoles = {};
+    window.editingUserId = null;
+    
+    // 加载用户数据
+    window.loadUsers = async function() {
+      try {
+        const response = await fetch('/api/cms-users.json');
+        const result = await response.json();
+        
+        if (result.success) {
+          currentUsers = result.users || [];
+          currentRoles = result.roles || {};
+          
+          // 更新统计
+          updateUserStats(result.stats);
+          
+          // 渲染用户列表
+          renderUsers(currentUsers);
+          
+          // 渲染权限设置
+          renderPermissions(currentRoles);
+        } else {
+          showError('加载用户数据失败: ' + result.error);
+        }
+      } catch (error) {
+        showError('加载用户数据出错: ' + error.message);
+      }
+    }
+    
+    // 更新用户统计
+    window.updateUserStats = function(stats) {
+      document.getElementById('total-users').textContent = stats.total || 0;
+      document.getElementById('admin-count').textContent = stats.byRole?.admin || 0;
+      document.getElementById('editor-count').textContent = stats.byRole?.editor || 0;
+      document.getElementById('viewer-count').textContent = stats.byRole?.viewer || 0;
+    }
+    
+    // 渲染用户列表
+    window.renderUsers = function(users) {
+      const roleFilter = document.getElementById('role-filter').value;
+      const filteredUsers = roleFilter === 'all' 
+        ? users 
+        : users.filter(user => user.role === roleFilter);
+      
+      const listElement = document.getElementById('user-list');
+      
+      if (filteredUsers.length === 0) {
+        listElement.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h3>暂无用户</h3>
+            <p>点击"添加用户"按钮开始创建用户</p>
+          </div>
+        `;
+        return;
+      }
+      
+      listElement.innerHTML = `
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th>用户名</th>
+              <th>邮箱</th>
+              <th>角色</th>
+              <th>状态</th>
+              <th>最后登录</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredUsers.map(user => `
+              <tr>
+                <td>${user.username}</td>
+                <td>${user.email}</td>
+                <td><span class="role-badge ${user.role}">${currentRoles[user.role]?.name || user.role}</span></td>
+                <td><span class="status-badge ${user.status}">${user.status === 'active' ? '活跃' : '禁用'}</span></td>
+                <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : '从未登录'}</td>
+                <td>
+                  <button class="btn-edit" onclick="window.editUser(${user.id})">编辑</button>
+                  <button class="btn-delete" onclick="window.deleteUser(${user.id})">删除</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    // 渲染权限设置
+    window.renderPermissions = function(roles) {
+      const gridElement = document.getElementById('permission-grid');
+      
+      gridElement.innerHTML = Object.keys(roles).map(roleKey => {
+        const role = roles[roleKey];
+        return `
+          <div class="permission-card">
+            <h3>${role.name}</h3>
+            <ul>
+              ${role.permissions.map(permission => `
+                <li>✅ ${permission}</li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // 搜索用户
+    function searchUsers() {
+      const searchTerm = document.getElementById('user-search').value.toLowerCase();
+      const filteredUsers = currentUsers.filter(user => 
+        user.username.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm) ||
+        user.name.toLowerCase().includes(searchTerm)
+      );
+      renderUsers(filteredUsers);
+    }
+    
+    // 打开用户表单
+    window.openUserForm = function(userId = null) {
+      editingUserId = userId;
+      const modal = document.getElementById('user-editor');
+      const title = document.getElementById('user-editor-title');
+      const form = document.getElementById('user-form');
+      
+      if (userId) {
+        title.textContent = '编辑用户';
+        const user = currentUsers.find(u => u.id === userId);
+        if (user) {
+          document.getElementById('user-username').value = user.username;
+          document.getElementById('user-email').value = user.email;
+          document.getElementById('user-name').value = user.name;
+          document.getElementById('user-role').value = user.role;
+          document.getElementById('user-status').value = user.status;
+        }
+      } else {
+        title.textContent = '添加用户';
+        form.reset();
+      }
+      
+      modal.style.display = 'block';
+    }
+    
+    // 关闭用户表单
+    window.closeUserForm = function() {
+      document.getElementById('user-editor').style.display = 'none';
+      editingUserId = null;
+    }
+    
+    // 保存用户
+    window.saveUser = async function(event) {
+      event.preventDefault();
+      
+      const formData = {
+        username: document.getElementById('user-username').value,
+        email: document.getElementById('user-email').value,
+        name: document.getElementById('user-name').value,
+        role: document.getElementById('user-role').value,
+        status: document.getElementById('user-status').value
+      };
+      
+      try {
+        const method = editingUserId ? 'PUT' : 'POST';
+        const response = await fetch('/api/cms-users.json', {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: editingUserId,
+            ...formData
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          closeUserForm();
+          loadUsers(); // 重新加载用户列表
+          showSuccess(editingUserId ? '用户更新成功' : '用户创建成功');
+        } else {
+          showError('保存失败: ' + result.error);
+        }
+      } catch (error) {
+        showError('保存出错: ' + error.message);
+      }
+    }
+    
+    // 编辑用户
+    window.editUser = function(id) {
+      openUserForm(id);
+    }
+    
+    // 删除用户
+    window.deleteUser = async function(id) {
+      if (!confirm('确定要删除这个用户吗？此操作不可恢复。')) return;
+      
+      try {
+        const response = await fetch(`/api/cms-users.json?id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          loadUsers(); // 重新加载用户列表
+          showSuccess('用户删除成功');
+        } else {
+          showError('删除失败: ' + result.error);
+        }
+      } catch (error) {
+        showError('删除出错: ' + error.message);
+      }
+    }
+    
+    // 显示成功消息
+    window.showSuccess = function(message) {
+      alert('✅ ' + message);
+    }
+    
+    // 显示错误消息
+    window.showError = function(message) {
+      alert('❌ ' + message);
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      window.loadUsers();
+      document.getElementById('user-form').addEventListener('submit', window.saveUser);
+    });
+  </script>
+  
+  <style>
+    .cms-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+    
+    .page-header {
+      margin-bottom: 2rem;
+    }
+    
+    .page-header h1 {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-header p {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+    
+    .btn-primary {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+    
+    .user-management {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+    
+    .management-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .management-header h2 {
+      margin: 0;
+      color: #333;
+    }
+    
+    .management-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .management-controls select,
+    .management-controls input {
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .user-list {
+      padding: 1.5rem;
+    }
+    
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .user-table th,
+    .user-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .user-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .role-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .role-badge.admin {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .role-badge.editor {
+      background: #007bff;
+      color: white;
+    }
+    
+    .role-badge.viewer {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .status-badge.active {
+      background: #28a745;
+      color: white;
+    }
+    
+    .status-badge.inactive {
+      background: #6c757d;
+      color: white;
+    }
+    
+    .btn-edit {
+      background: #ffc107;
+      color: #212529;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+    
+    .btn-edit:hover {
+      background: #e0a800;
+    }
+    
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-delete:hover {
+      background: #c82333;
+    }
+    
+    .permission-settings {
+      padding: 2rem;
+      border-top: 1px solid #e9ecef;
+    }
+    
+    .permission-settings h2 {
+      margin: 0 0 1.5rem 0;
+      color: #333;
+    }
+    
+    .permission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .permission-card {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+    
+    .permission-card h3 {
+      margin: 0 0 1rem 0;
+      color: #495057;
+    }
+    
+    .permission-card ul {
+      margin: 0;
+      padding-left: 1rem;
+    }
+    
+    .permission-card li {
+      margin-bottom: 0.5rem;
+      color: #6c757d;
+    }
+  </style>
+</MainLayout>
