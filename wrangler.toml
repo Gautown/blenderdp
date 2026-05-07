@@ -1,16 +1,17 @@
 name = "blenderdp"
 compatibility_date = "2025-10-08"
 compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./dist"
 
-# Workers 配置 - 使用正确的构建输出目录
-[assets]
-binding = "STATIC_ASSETS"
-directory = "./dist/client"
-
-# KV 命名空间配置
+# KV 命名空间配置 - 使用占位符 ID，实际 ID 会在 Cloudflare Pages 中自动配置
 [[kv_namespaces]]
 binding = "MY_SESSION_KV"
 id = "placeholder_id"
+
+# 使用自定义的 Assets 绑定名称，避免使用保留的 "ASSETS"
+[assets]
+binding = "STATIC_ASSETS"
+directory = "./dist/client"
 
 [vars]
 NODE_VERSION = "22"
